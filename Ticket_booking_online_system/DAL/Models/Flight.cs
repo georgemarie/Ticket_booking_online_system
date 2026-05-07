@@ -1,0 +1,47 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Text;
+
+namespace DAL.Models
+{
+    public class Flight
+    {
+        [Key]
+        [Required(ErrorMessage = "Flight Number is required.")]
+        [StringLength(20, ErrorMessage = "Flight Number cannot exceed 20 characters.")]
+        public string Flight_Number { get; set; }
+
+        [ForeignKey("OriginLocation")]
+        [Required(ErrorMessage = "Origin Location is required.")]
+        public int Origin_LocationID { get; set; }
+        public Location OriginLocation { get; set; }
+
+        [ForeignKey("DestLocation")]
+        [Required(ErrorMessage = "Destination Location is required.")]
+        public int Dest_LocationID { get; set; }
+        public Location DestLocation { get; set; }
+
+        [Required(ErrorMessage = "Arrival Time is required.")]
+        public DateTime Arrival_Time { get; set; }
+
+        [Required(ErrorMessage = "Departure Date is required.")]
+        public DateTime Depart_Date { get; set; }
+
+        [Required(ErrorMessage = "Available Seats is required.")]
+        [Range(0, 1000, ErrorMessage = "Available Seats cannot be negative.")]
+        public int Available_Seats { get; set; }
+
+        [Required(ErrorMessage = "Class is required.")]
+        [StringLength(50, ErrorMessage = "Class cannot exceed 50 characters.")]
+        public string Class { get; set; }
+
+        [ForeignKey("Airline")]
+        [Required(ErrorMessage = "Airline is required.")]
+        public int Airline_ID { get; set; }
+        public Airline Airline { get; set; }
+
+        public ICollection<Booking> Bookings { get; set; }
+    }
+}
