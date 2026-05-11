@@ -11,3 +11,18 @@ D:\ITI 9 Month\Content\ASP.NET Core MVC\Project\Ticket_booking_online_system\Tic
 D:\ITI 9 Month\Content\ASP.NET Core MVC\Project\Ticket_booking_online_system\Ticket_booking_online_system\DAL\obj\Debug\net10.0\refint\DAL.dll
 D:\ITI 9 Month\Content\ASP.NET Core MVC\Project\Ticket_booking_online_system\Ticket_booking_online_system\DAL\obj\Debug\net10.0\DAL.pdb
 D:\ITI 9 Month\Content\ASP.NET Core MVC\Project\Ticket_booking_online_system\Ticket_booking_online_system\DAL\obj\Debug\net10.0\ref\DAL.dll
+C:\Users\Dell\source\repos\Ticket_booking_online_system\Ticket_booking_online_system\DAL\bin\Debug\net10.0\DAL.deps.json
+C:\Users\Dell\source\repos\Ticket_booking_online_system\Ticket_booking_online_system\DAL\bin\Debug\net10.0\DAL.dll
+C:\Users\Dell\source\repos\Ticket_booking_online_system\Ticket_booking_online_system\DAL\bin\Debug\net10.0\DAL.pdb
+C:\Users\Dell\source\repos\Ticket_booking_online_system\Ticket_booking_online_system\DAL\obj\Debug\net10.0\DAL.csproj.AssemblyReference.cache
+C:\Users\Dell\source\repos\Ticket_booking_online_system\Ticket_booking_online_system\DAL\obj\Debug\net10.0\DAL.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Dell\source\repos\Ticket_booking_online_system\Ticket_booking_online_system\DAL\obj\Debug\net10.0\DAL.AssemblyInfoInputs.cache
+C:\Users\Dell\source\repos\Ticket_booking_online_system\Ticket_booking_online_system\DAL\obj\Debug\net10.0\DAL.AssemblyInfo.cs
+C:\Users\Dell\source\repos\Ticket_booking_online_system\Ticket_booking_online_system\DAL\obj\Debug\net10.0\DAL.csproj.CoreCompileInputs.cache
+C:\Users\Dell\source\repos\Ticket_booking_online_system\Ticket_booking_online_system\DAL\obj\Debug\net10.0\DAL.sourcelink.json
+C:\Users\Dell\source\repos\Ticket_booking_online_system\Ticket_booking_online_system\DAL\obj\Debug\net10.0\DAL.dll
+C:\Users\Dell\source\repos\Ticket_booking_online_system\Ticket_booking_online_system\DAL\obj\Debug\net10.0\refint\DAL.dll
+C:\Users\Dell\source\repos\Ticket_booking_online_system\Ticket_booking_online_system\DAL\obj\Debug\net10.0\DAL.pdb
+C:\Users\Dell\source\repos\Ticket_booking_online_system\Ticket_booking_online_system\DAL\obj\Debug\net10.0\ref\DAL.dll
+C:\Users\Dell\source\repos\Ticket_booking_online_system\Ticket_booking_online_system\DAL\bin\Debug\net10.0\DAL.runtimeconfig.json
+C:\Users\Dell\source\repos\Ticket_booking_online_system\Ticket_booking_online_system\DAL\obj\Debug\net10.0\DAL.genruntimeconfig.cache

@@ -1,0 +1,24 @@
+﻿<h1>Search Flights</h1>
+
+<form method="get" asp-controller="Flight" asp-action="Search">
+
+    <div>
+        <label>From</label>
+        <input type="text" name="from" />
+    </div>
+
+    <div>
+        <label>To</label>
+        <input type="text" name="to" />
+    </div>
+
+    <div>
+        <label>Date</label>
+        <input type="date" name="date" />
+    </div>
+
+    <button type="submit">
+        Search
+    </button>
+
+</form>

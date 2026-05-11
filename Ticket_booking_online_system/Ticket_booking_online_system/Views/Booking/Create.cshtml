@@ -1,0 +1,14 @@
+﻿@model DAL.Models.Flight
+
+<h2>Book Flight</h2>
+
+<p>Flight: @Model.Flight_Number</p>
+<p>From: @Model.OriginLocation.City</p>
+<p>To: @Model.DestLocation.City</p>
+<p>Seats: @Model.Available_Seats</p>
+<form method="post" asp-action="CreateBooking">
+    <input type="hidden" name="flightNumber" value="@Model.Flight_Number" />
+    <input type="hidden" name="userId" value="2" />
+
+    <button type="submit">Confirm Booking</button>
+</form>
