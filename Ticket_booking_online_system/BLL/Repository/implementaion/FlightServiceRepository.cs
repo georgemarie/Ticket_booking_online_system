@@ -20,13 +20,13 @@ namespace BLL.Repository.implementaion
             _context = context;
         }
 
-        public IEnumerable<FlightService> GetAllFlights()
-        {
-            return _context.Services
-                .OfType<FlightService>()
-                .Include(f => f.Location)
-                .Include(f => f.Airline)
-                .ToList();
-        }
+        //public IEnumerable<FlightService> GetAllFlights()
+        //{
+        //    return _context.Services
+        //        .OfType<FlightService>()
+        //        .Include(f => f.Location)
+        //        .Include(f => f.Airline)
+        //        .ToList();
+        //}
     }
 }

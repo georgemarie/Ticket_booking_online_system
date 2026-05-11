@@ -8,6 +8,6 @@ namespace BLL.Repository.Interfaces
     public interface IFlightServiceRepository
          : IGenericRepository<FlightService>
     {
-        IEnumerable<FlightService> GetAllFlights();
+        //IEnumerable<FlightService> GetAllFlights();
     }
 }
