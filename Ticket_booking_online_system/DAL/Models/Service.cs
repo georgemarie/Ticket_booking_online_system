@@ -6,7 +6,7 @@ using System.Text;
 
 namespace DAL.Models
 {
-    public abstract class Service
+    public class Service
     {
         [Key]
         public int ServiceID { get; set; }

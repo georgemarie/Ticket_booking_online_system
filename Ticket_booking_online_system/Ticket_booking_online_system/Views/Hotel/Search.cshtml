@@ -1,0 +1,16 @@
+﻿@model IEnumerable<DAL.Models.HotelService>
+
+<h2>Search Results</h2>
+
+<a href="/Hotel/Index">Back</a>
+
+<table class="table">
+    @foreach (var hotel in Model)
+    {
+        <tr>
+            <td>@hotel.Hotel_Name</td>
+            <td>@hotel.Location.City</td>
+            <td>@hotel.Room_Type</td>
+        </tr>
+    }
+</table>

@@ -1,0 +1,35 @@
+﻿@model IEnumerable<DAL.Models.Flight>
+
+<h2>Available Flights</h2>
+
+<table border="1">
+
+    <tr>
+        <th>Flight</th>
+        <th>From</th>
+        <th>To</th>
+        <th>Date</th>
+        <th>Seats</th>
+        <th>Airline</th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.Flight_Number</td>
+            <td>@item.OriginLocation.City</td>
+            <td>@item.DestLocation.City</td>
+            <td>@item.Depart_Date</td>
+            <td>@item.Available_Seats</td>
+            <td>@item.Airline.Airline_Name</td>
+            <td>
+                <a asp-controller="Booking"
+                       asp-action="Create"
+                       asp-route-flightNumber="@item.Flight_Number">
+                    Book Now
+                </a>
+            </td>
+        </tr>
+    }
+
+</table>
