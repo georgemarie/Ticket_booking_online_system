@@ -1,8 +1,54 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿<h1>Ticket Booking System</h1>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<hr />
+
+<h2>Our Services</h2>
+
+<div>
+
+    <h3>Flights</h3>
+
+    <p>Search and book flights</p>
+
+    <a asp-controller="Flight"
+           asp-action="SearchPage">
+
+        Go to Flights
+
+    </a>
+
+</div>
+
+<hr />
+
+<div>
+
+    <h3>Hotels</h3>
+
+    <p>Find hotels and rooms</p>
+
+    <a asp-controller="Hotel"
+           asp-action="Index">
+
+        Go to Hotels
+
+    </a>
+
+</div>
+
+<hr />
+
+<div>
+
+    <h3>Transportation</h3>
+
+    <p>Book buses and trains</p>
+
+    <a asp-controller="Transportation"
+           asp-action="Index">
+
+        Go to Transportation
+
+    </a>
+
 </div>

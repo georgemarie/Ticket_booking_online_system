@@ -1,0 +1,37 @@
+﻿@model IEnumerable<DAL.Models.HotelService>
+
+<h2>Available Hotels</h2>
+
+<form method="get" action="/Hotel/Search">
+    <input type="text" name="city" placeholder="Search by city" />
+    <button type="submit">Search</button>
+</form>
+
+<br />
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Hotel</th>
+            <th>City</th>
+            <th>Room Type</th>
+            <th>Price</th>
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var hotel in Model)
+        {
+            <tr>
+                <td>@hotel.Hotel_Name</td>
+                <td>@hotel.Location.City</td>
+                <td>@hotel.Room_Type</td>
+                <td>@hotel.BasePrice</td>
+                <td>
+                    <a href="/Hotel/Details/@hotel.ServiceID">Details</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
