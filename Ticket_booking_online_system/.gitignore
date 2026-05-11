@@ -1,4 +1,3 @@
 .vs/
-[Oo]bj/
-[Bb]in/
-*.user
+bin/
+obj/
