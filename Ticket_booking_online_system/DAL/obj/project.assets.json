@@ -2109,23 +2109,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\georg\\.nuget\\packages\\": {},
+    "C:\\Users\\DELL\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\ITI 9 Month\\Content\\ASP.NET Core MVC\\Project\\Ticket_booking_online_system\\Ticket_booking_online_system\\DAL\\DAL.csproj",
+      "projectUniqueName": "D:\\ITI\\MVC\\Proj\\Ticket-booking\\Ticket_booking_online_system\\DAL\\DAL.csproj",
       "projectName": "DAL",
-      "projectPath": "D:\\ITI 9 Month\\Content\\ASP.NET Core MVC\\Project\\Ticket_booking_online_system\\Ticket_booking_online_system\\DAL\\DAL.csproj",
-      "packagesPath": "C:\\Users\\georg\\.nuget\\packages\\",
-      "outputPath": "D:\\ITI 9 Month\\Content\\ASP.NET Core MVC\\Project\\Ticket_booking_online_system\\Ticket_booking_online_system\\DAL\\obj\\",
+      "projectPath": "D:\\ITI\\MVC\\Proj\\Ticket-booking\\Ticket_booking_online_system\\DAL\\DAL.csproj",
+      "packagesPath": "C:\\Users\\DELL\\.nuget\\packages\\",
+      "outputPath": "D:\\ITI\\MVC\\Proj\\Ticket-booking\\Ticket_booking_online_system\\DAL\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\georg\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\DELL\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
