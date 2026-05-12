@@ -19,37 +19,28 @@ namespace Ticket_booking_online_system.Controllers
             _flightRepo = flightRepo;
         }
 
-        public IActionResult Index(int userId)
+        public IActionResult Index(int userId=2)
         {
             var bookings = _bookingService.GetUserBookings(userId);
             return View(bookings);
         }
 
 
-        public IActionResult Create(string flightNumber)
-        {
-            var flight = _flightRepo
-        .GetAllWithIncludes()
-        .FirstOrDefault(f => f.Flight_Number == flightNumber);
-
-            if (flight == null)
-                return NotFound();
-
-            return View(flight);
-
-           
-        }
-
+        
 
         [HttpPost]
-        public IActionResult CreateBooking(string flightNumber)
+        public IActionResult CreateBooking(int serviceId)
         {
-            bool result = _bookingService.CreateBooking(flightNumber);
+            bool result =
+                _bookingService
+                    .CreateBooking(serviceId);
 
             if (!result)
-                return Content("Booking Failed ❌");
+                return Content("Booking Failed");
 
-            return RedirectToAction("Index", new { userId = 2 });
+            return RedirectToAction(
+                "Index",
+                "Booking");
         }
 
 

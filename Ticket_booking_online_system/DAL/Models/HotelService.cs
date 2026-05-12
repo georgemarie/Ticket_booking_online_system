@@ -13,6 +13,7 @@ namespace DAL.Models
         [ForeignKey("Service")]
         public int ServiceId { get; set; }
         [StringLength(150, ErrorMessage = "Hotel Name cannot exceed 150 characters.")]
+        public Service Service { get; set; }
         public string Hotel_Name { get; set; }
 
         [StringLength(100, ErrorMessage = "Room Type cannot exceed 100 characters.")]

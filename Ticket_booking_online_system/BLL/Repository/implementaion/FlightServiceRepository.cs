@@ -20,13 +20,44 @@ namespace BLL.Repository.implementaion
             _context = context;
         }
 
-        //public IEnumerable<FlightService> GetAllFlights()
-        //{
-        //    return _context.Services
-        //        .OfType<FlightService>()
-        //        .Include(f => f.Location)
-        //        .Include(f => f.Airline)
-        //        .ToList();
-        //}
+        public IEnumerable<FlightService>
+           GetAllWithIncludes()
+        {
+            return _context.FlightServices
+
+                .Include(f => f.Flight)
+
+                    .ThenInclude(f =>
+                        f.Airline)
+
+                .Include(f => f.Flight)
+
+                    .ThenInclude(f =>
+                        f.OriginLocation)
+
+                .Include(f => f.Flight)
+
+                    .ThenInclude(f =>
+                        f.DestLocation)
+
+                .Include(f => f.Service)
+
+                .ToList();
+        }
+        public IEnumerable<FlightService> Search(string from, string to, DateTime date)
+        {
+            return _context.FlightServices
+                .Include(f => f.Flight)
+                    .ThenInclude(x => x.OriginLocation)
+                .Include(f => f.Flight)
+                    .ThenInclude(x => x.DestLocation)
+                .Include(f => f.Service)
+                .Where(f =>
+                    f.Flight.OriginLocation.City.Contains(from) &&
+                    f.Flight.DestLocation.City.Contains(to) &&
+                    f.Flight.Depart_Date >= date.Date &&
+                    f.Flight.Depart_Date < date.Date.AddDays(1))
+                .ToList();
+        }
     }
 }

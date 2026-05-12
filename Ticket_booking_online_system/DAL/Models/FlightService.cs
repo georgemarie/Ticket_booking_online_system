@@ -13,7 +13,7 @@ namespace DAL.Models
         [ForeignKey("Service")]
         public int ServiceId { get; set; }
 
-
+        public Service Service { get; set; }
         //[ForeignKey("Airline")]
         //[Required(ErrorMessage = "Airline is required for Flight Services.")]
         //public int Airline_ID { get; set; }

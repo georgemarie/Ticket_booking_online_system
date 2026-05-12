@@ -1,0 +1,31 @@
+﻿@model DAL.Models.FlightService
+
+<h2>Flight Details</h2>
+
+<h3>@Model.Flight.Flight_Number</h3>
+
+<p>
+    From: @Model.Flight.OriginLocation.City <br />
+    To: @Model.Flight.DestLocation.City
+</p>
+
+<p>
+    Date: @Model.Flight.Depart_Date
+</p>
+
+<p>
+    Price: @Model.Service.BasePrice
+</p>
+
+
+<form asp-controller="Booking"
+      asp-action="CreateBooking"
+      method="post">
+
+    <input type="hidden"
+           name="serviceId"
+           value="@Model.ServiceId" />
+
+    <button>Book Now</button>
+
+</form>

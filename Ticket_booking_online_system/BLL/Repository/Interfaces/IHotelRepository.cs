@@ -12,5 +12,7 @@ namespace BLL.Repository.Interfaces
         //HotelService GetHotelById(int id);
 
         //IEnumerable<HotelService> SearchByCity(string city);
+        IEnumerable<HotelService> GetAllWithIncludes();
+        public IEnumerable<HotelService> Search(string city);
     }
 }

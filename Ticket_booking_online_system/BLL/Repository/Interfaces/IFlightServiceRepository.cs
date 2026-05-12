@@ -8,6 +8,7 @@ namespace BLL.Repository.Interfaces
     public interface IFlightServiceRepository
          : IGenericRepository<FlightService>
     {
-        //IEnumerable<FlightService> GetAllFlights();
+        IEnumerable<FlightService> GetAllWithIncludes();
+        public IEnumerable<FlightService> Search(string from, string to, DateTime date);
     }
 }
