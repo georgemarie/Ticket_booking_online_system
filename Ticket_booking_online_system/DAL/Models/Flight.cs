@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DAL.CustomDataAnnotation;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -24,6 +25,7 @@ namespace DAL.Models
         public Location DestLocation { get; set; }
 
         [Required(ErrorMessage = "Arrival Time is required.")]
+        [ArrivalAfterDeparture]
         public DateTime Arrival_Time { get; set; }
 
         [Required(ErrorMessage = "Departure Date is required.")]
