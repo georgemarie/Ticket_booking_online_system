@@ -1,41 +1,83 @@
-﻿using BLL.Repository.Interfaces;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Ticket_booking_online_system.Controllers
 {
     public class HotelController : Controller
     {
-        private readonly IHotelRepository _hotelRepo;
-
-        public HotelController(IHotelRepository hotelRepo)
+        // GET: HotelController
+        public ActionResult Index()
         {
-            _hotelRepo = hotelRepo;
+            return View();
         }
 
-        public IActionResult Search()
+        // GET: HotelController/Details/5
+        public ActionResult Details(int id)
         {
-            var hotels = _hotelRepo.GetAllWithIncludes().ToList();
-
-            return View(hotels);
+            return View();
         }
 
-        public IActionResult Results(string city)
+        // GET: HotelController/Create
+        public ActionResult Create()
         {
-            var hotels = _hotelRepo.Search(city);
-
-            return View("Search", hotels);
+            return View();
         }
 
-        public IActionResult Details(int serviceId)
+        // POST: HotelController/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Create(IFormCollection collection)
         {
-            var hotel =
-                _hotelRepo.GetAllWithIncludes()
-                .FirstOrDefault(h => h.ServiceId == serviceId);
+            try
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                return View();
+            }
+        }
 
-            if (hotel == null)
-                return NotFound();
+        // GET: HotelController/Edit/5
+        public ActionResult Edit(int id)
+        {
+            return View();
+        }
 
-            return View(hotel);
+        // POST: HotelController/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(int id, IFormCollection collection)
+        {
+            try
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                return View();
+            }
+        }
+
+        // GET: HotelController/Delete/5
+        public ActionResult Delete(int id)
+        {
+            return View();
+        }
+
+        // POST: HotelController/Delete/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Delete(int id, IFormCollection collection)
+        {
+            try
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                return View();
+            }
         }
     }
 }
