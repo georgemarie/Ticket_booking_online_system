@@ -21,6 +21,7 @@ namespace Ticket_booking_online_system.Controllers
         //   [Authorize(Roles = "Admin")]
         // GET: /User
         [HttpGet("")]
+        [HttpGet("Index")]
         public ActionResult Index()
         {
             var users = _userRepository.GetAll();
@@ -40,7 +41,7 @@ namespace Ticket_booking_online_system.Controllers
                 return NotFound();
             }
 
-            return View();
+            return View(user);
         }
 
 
@@ -67,8 +68,8 @@ namespace Ticket_booking_online_system.Controllers
         }
         #endregion
 
-        [HttpGet("GetUserProfile")]
-        // GET: /User/GetUserProfile
+        [HttpGet("Profile/{id:int}")]
+        // GET: /User/Profile/5
         public ActionResult Details(int id)
         {
             var user = _userRepository.GetById(id);
@@ -111,7 +112,7 @@ namespace Ticket_booking_online_system.Controllers
 
         // POST: /User/Edit/5
         [ValidateAntiForgeryToken]
-        [HttpPost("Edit/{id:int}")]
+        [HttpPost("Edit")]
         public ActionResult Edit( User model)
         {
                 if (!ModelState.IsValid)

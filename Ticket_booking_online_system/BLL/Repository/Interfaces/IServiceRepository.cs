@@ -9,3 +9,4 @@ namespace BLL.Repository.Interfaces
     {
     }
 }
+
