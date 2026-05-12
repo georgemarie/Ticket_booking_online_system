@@ -5,13 +5,23 @@ using System.Text;
 
 namespace DAL.Models
 {
+    public enum SupportedAirline
+    {
+        EgyptAir,
+        Emirates,
+        Lufthansa,
+        BritishAirways,
+        DeltaAirLines,
+        SingaporeAirlines,
+        Qantas
+    }
     public class Airline
     {
         [Key]
         public int Airline_ID { get; set; }
 
         [Required(ErrorMessage = "Airline Name is required.")]
-        [StringLength(150, ErrorMessage = "Airline Name cannot exceed 150 characters.")]
+        [EnumDataType(typeof(SupportedAirline))]
         public string Airline_Name { get; set; }
 
         public ICollection<Flight> Flights { get; set; }

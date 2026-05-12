@@ -5,6 +5,15 @@ using System.Text;
 
 namespace DAL.Models
 {
+    public enum Country
+    {
+        Egypt,
+        Spain,
+        France,
+        Germany,
+        Italy,
+        Switzerland,
+    }
     public class Location
     {
         [Key]
@@ -19,7 +28,7 @@ namespace DAL.Models
         public string City { get; set; }
 
         [Required(ErrorMessage = "Country is required.")]
-        [StringLength(100, ErrorMessage = "Country cannot exceed 100 characters.")]
+        [EnumDataType(typeof(Country))]
         public string Country { get; set; }
 
         public ICollection<Service> Services { get; set; }
