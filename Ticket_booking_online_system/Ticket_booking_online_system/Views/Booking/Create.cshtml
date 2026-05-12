@@ -1,14 +1,20 @@
-﻿@model DAL.Models.Flight
+﻿@model DAL.ViewModels.ServiceVM
 
-<h2>Book Flight</h2>
+<h2>Confirm Booking</h2>
 
-<p>Flight: @Model.Flight_Number</p>
-<p>From: @Model.OriginLocation.City</p>
-<p>To: @Model.DestLocation.City</p>
-<p>Seats: @Model.Available_Seats</p>
-<form method="post" asp-action="CreateBooking">
-    <input type="hidden" name="flightNumber" value="@Model.Flight_Number" />
-    <input type="hidden" name="userId" value="2" />
+<p>Title: @Model.Title</p>
+<p>Type: @Model.Type</p>
+<p>Price: @Model.Price</p>
 
-    <button type="submit">Confirm Booking</button>
+<form method="post"
+      asp-action="CreateBooking">
+
+    <input type="hidden"
+           name="serviceId"
+           value="@Model.ServiceID" />
+
+    <button type="submit">
+        Confirm
+    </button>
+
 </form>

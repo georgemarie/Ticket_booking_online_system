@@ -1,0 +1,24 @@
+﻿@model DAL.Models.HotelService
+
+<h2>Hotel Details</h2>
+
+<h3>@Model.Hotel_Name</h3>
+
+<p>Room: @Model.Room_Type</p>
+
+<p>Location: @Model.Service.Location.City</p>
+
+<p>Price: @Model.Service.BasePrice</p>
+
+
+<form asp-controller="Booking"
+      asp-action="CreateBooking"
+      method="post">
+
+    <input type="hidden"
+           name="serviceId"
+           value="@Model.ServiceId" />
+
+    <button>Book Hotel</button>
+
+</form>

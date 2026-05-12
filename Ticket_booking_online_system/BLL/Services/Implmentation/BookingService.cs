@@ -22,31 +22,20 @@ namespace BLL.Services.Implmentation
         }
 
 
-        public bool CreateBooking(string flightNumber)
+        public bool CreateBooking(int serviceId)
         {
-            var flight = _flightRepo
-                .GetAllWithIncludes()
-                .FirstOrDefault(f => f.Flight_Number == flightNumber);
-
-            if (flight == null)
-                return false;
-
-            if (flight.Available_Seats <= 0)
-                return false;
-
             Booking booking = new Booking()
             {
-               //Flight_Number = flight.Flight_Number,
+                ServiceID = serviceId,
+
                 UserID = 2,
+
                 Date = DateTime.Now,
+
                 Status = "Confirmed"
             };
 
             _bookingRepo.Add(booking);
-
-            flight.Available_Seats--;
-
-            _flightRepo.Update(flight);
 
             _bookingRepo.Save();
 
