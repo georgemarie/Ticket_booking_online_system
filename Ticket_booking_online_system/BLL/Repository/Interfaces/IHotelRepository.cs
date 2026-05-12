@@ -7,10 +7,12 @@ namespace BLL.Repository.Interfaces
 {
     public interface IHotelRepository : IGenericRepository<HotelService>
     {
-        IEnumerable<HotelService> GetAllHotels();
+        //IEnumerable<HotelService> GetAllHotels();
 
-        HotelService GetHotelById(int id);
+        //HotelService GetHotelById(int id);
 
-        IEnumerable<HotelService> SearchByCity(string city);
+        //IEnumerable<HotelService> SearchByCity(string city);
+        IEnumerable<HotelService> GetAllWithIncludes();
+        public IEnumerable<HotelService> Search(string city);
     }
 }

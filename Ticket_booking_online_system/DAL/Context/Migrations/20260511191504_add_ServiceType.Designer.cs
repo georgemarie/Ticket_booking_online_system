@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Ticket_booking_online_system.Data;
 
@@ -11,9 +12,11 @@ using Ticket_booking_online_system.Data;
 namespace Ticket_booking_online_system.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260511191504_add_ServiceType")]
+    partial class add_ServiceType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -141,8 +144,6 @@ namespace Ticket_booking_online_system.Data.Migrations
 
                     b.HasIndex("Flight_Number");
 
-                    b.HasIndex("ServiceId");
-
                     b.ToTable("FlightServices");
                 });
 
@@ -162,7 +163,8 @@ namespace Ticket_booking_online_system.Data.Migrations
 
                     b.Property<string>("Hotel_Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
 
                     b.Property<string>("Room_Type")
                         .IsRequired()
@@ -173,8 +175,6 @@ namespace Ticket_booking_online_system.Data.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ServiceId");
 
                     b.ToTable("HotelServices");
                 });
@@ -661,26 +661,7 @@ namespace Ticket_booking_online_system.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("DAL.Models.Service", "Service")
-                        .WithMany()
-                        .HasForeignKey("ServiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Flight");
-
-                    b.Navigation("Service");
-                });
-
-            modelBuilder.Entity("DAL.Models.HotelService", b =>
-                {
-                    b.HasOne("DAL.Models.Service", "Service")
-                        .WithMany()
-                        .HasForeignKey("ServiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Service");
                 });
 
             modelBuilder.Entity("DAL.Models.Payment", b =>

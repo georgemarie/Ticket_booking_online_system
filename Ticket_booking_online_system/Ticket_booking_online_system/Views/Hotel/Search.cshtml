@@ -1,16 +1,30 @@
 ﻿@model IEnumerable<DAL.Models.HotelService>
 
-<h2>Search Results</h2>
+<h2>Hotels</h2>
 
-<a href="/Hotel/Index">Back</a>
+<form method="get" asp-action="Results">
+    <input name="city" placeholder="City" />
+    <button>Search</button>
+</form>
 
-<table class="table">
-    @foreach (var hotel in Model)
-    {
-        <tr>
-            <td>@hotel.Hotel_Name</td>
-            <td>@hotel.Location.City</td>
-            <td>@hotel.Room_Type</td>
-        </tr>
-    }
-</table>
+<hr />
+
+@foreach (var item in Model)
+{
+    <div style="border:1px solid gray; margin:10px; padding:10px;">
+
+        <h3>@item.Hotel_Name</h3>
+
+        <p>@item.Room_Type</p>
+
+        <p>Price: @item.Service.BasePrice</p>
+
+       
+        <a asp-controller="Hotel"
+               asp-action="Details"
+               asp-route-serviceId="@item.ServiceId">
+            book
+        </a>
+
+    </div>
+}

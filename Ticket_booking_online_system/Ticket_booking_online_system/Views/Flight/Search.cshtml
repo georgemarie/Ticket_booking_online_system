@@ -1,35 +1,46 @@
-﻿@model IEnumerable<DAL.Models.Flight>
+﻿@model DAL.ViewModels.FlightSearchVM
 
-<h2>Available Flights</h2>
+<h2>Search Flights</h2>
 
-<table border="1">
+<form method="get" asp-action="Results">
 
-    <tr>
-        <th>Flight</th>
-        <th>From</th>
-        <th>To</th>
-        <th>Date</th>
-        <th>Seats</th>
-        <th>Airline</th>
-    </tr>
+    <input name="from" placeholder="From" />
+    <input name="to" placeholder="To" />
+    <input type="date" name="date" />
 
-    @foreach (var item in Model)
-    {
-        <tr>
-            <td>@item.Flight_Number</td>
-            <td>@item.OriginLocation.City</td>
-            <td>@item.DestLocation.City</td>
-            <td>@item.Depart_Date</td>
-            <td>@item.Available_Seats</td>
-            <td>@item.Airline.Airline_Name</td>
-            <td>
-                <a asp-controller="Booking"
-                       asp-action="Create"
-                       asp-route-flightNumber="@item.Flight_Number">
-                    Book Now
-                </a>
-            </td>
-        </tr>
-    }
+    <button>Search</button>
 
-</table>
+</form>
+
+<hr />
+
+<h3>All Available Flights</h3>
+
+@foreach (var item in Model.Flights)
+{
+    <div style="border:1px solid gray; margin:10px; padding:10px;">
+
+       
+
+            <h3>@item.Flight.Flight_Number</h3>
+
+            <p>
+                @item.Flight.OriginLocation.City →
+                @item.Flight.DestLocation.City
+            </p>
+
+           
+        <form asp-controller="Flight"
+              asp-action="Details"
+              asp-route-serviceId="@item.ServiceId">
+
+                <input type="hidden"
+                       name="serviceId"
+                       value="@item.ServiceId" />
+
+                <button>Book</button>
+
+            </form>
+
+    </div>
+}

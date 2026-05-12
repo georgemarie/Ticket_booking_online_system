@@ -1,54 +1,23 @@
-﻿<h1>Ticket Booking System</h1>
+﻿<h2>Choose Service Type</h2>
 
-<hr />
-
-<h2>Our Services</h2>
-
-<div>
-
-    <h3>Flights</h3>
-
-    <p>Search and book flights</p>
+<div style="display:flex; gap:20px;">
 
     <a asp-controller="Flight"
-           asp-action="SearchPage">
-
-        Go to Flights
-
+           asp-action="Search"
+           style="padding:20px; border:1px solid black;">
+        ✈️ Flights
     </a>
-
-</div>
-
-<hr />
-
-<div>
-
-    <h3>Hotels</h3>
-
-    <p>Find hotels and rooms</p>
 
     <a asp-controller="Hotel"
-           asp-action="Index">
-
-        Go to Hotels
-
+           asp-action="Search"
+           style="padding:20px; border:1px solid black;">
+        🏨 Hotels
     </a>
 
-</div>
-
-<hr />
-
-<div>
-
-    <h3>Transportation</h3>
-
-    <p>Book buses and trains</p>
-
-    <a asp-controller="Transportation"
-           asp-action="Index">
-
-        Go to Transportation
-
+    <a asp-controller="Transport"
+           asp-action="Search"
+           style="padding:20px; border:1px solid black;">
+        🚕 Transport
     </a>
 
 </div>
