@@ -27,9 +27,9 @@ namespace DAL.Models
         public int? ServiceID { get; set; }
         public Service Service { get; set; }
 
-        [ForeignKey("Flight")]
-        public string Flight_Number { get; set; }
-        public Flight Flight { get; set; }
+        //[ForeignKey("Flight")]
+        //public string Flight_Number { get; set; }
+        //public Flight Flight { get; set; }
 
         public Payment Payment { get; set; }
         public RefundCancel RefundCancel { get; set; }

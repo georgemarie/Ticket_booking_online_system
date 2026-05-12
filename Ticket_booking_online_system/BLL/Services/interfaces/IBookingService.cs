@@ -8,7 +8,7 @@ namespace BLL.Services.interfaces
     public interface IBookingService
     {
         // bool CreateBooking(string flightNumber, int userId);
-      bool  CreateBooking(string flightNumber);
+      bool  CreateBooking(int serviceId);
         IEnumerable<Booking> GetUserBookings(int userId);
 
         bool CancelBooking(int bookingId);

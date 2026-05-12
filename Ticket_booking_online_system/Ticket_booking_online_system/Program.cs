@@ -25,6 +25,9 @@ namespace Ticket_booking_online_system
             builder.Services.AddScoped<IBookingRepository, BookingRepository>();
             builder.Services.AddScoped<IHotelRepository, HotelRepository>();
             builder.Services.AddScoped<IFlightServiceRepository, FlightServiceRepository>();
+            builder.Services.AddScoped<
+    IServiceRepository,
+    ServiceRepository>();
             builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services.AddControllersWithViews();

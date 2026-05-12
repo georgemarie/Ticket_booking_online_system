@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Ticket_booking_online_system.Data;
 
@@ -11,9 +12,11 @@ using Ticket_booking_online_system.Data;
 namespace Ticket_booking_online_system.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260511185958_changeService")]
+    partial class changeService
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -132,6 +135,9 @@ namespace Ticket_booking_online_system.Data.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
+                    b.Property<string>("Flight_Number1")
+                        .HasColumnType("nvarchar(20)");
+
                     b.Property<int>("ServiceId")
                         .HasColumnType("int");
 
@@ -139,9 +145,7 @@ namespace Ticket_booking_online_system.Data.Migrations
 
                     b.HasIndex("Airline_ID");
 
-                    b.HasIndex("Flight_Number");
-
-                    b.HasIndex("ServiceId");
+                    b.HasIndex("Flight_Number1");
 
                     b.ToTable("FlightServices");
                 });
@@ -162,7 +166,8 @@ namespace Ticket_booking_online_system.Data.Migrations
 
                     b.Property<string>("Hotel_Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
 
                     b.Property<string>("Room_Type")
                         .IsRequired()
@@ -173,8 +178,6 @@ namespace Ticket_booking_online_system.Data.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ServiceId");
 
                     b.ToTable("HotelServices");
                 });
@@ -311,10 +314,6 @@ namespace Ticket_booking_online_system.Data.Migrations
 
                     b.Property<int>("LocationID")
                         .HasColumnType("int");
-
-                    b.Property<string>("ServiceType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ServiceID");
 
@@ -655,32 +654,11 @@ namespace Ticket_booking_online_system.Data.Migrations
                         .WithMany("FlightServices")
                         .HasForeignKey("Airline_ID");
 
-                    b.HasOne("DAL.Models.Flight", "Flight")
+                    b.HasOne("DAL.Models.Flight", "flight")
                         .WithMany()
-                        .HasForeignKey("Flight_Number")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("Flight_Number1");
 
-                    b.HasOne("DAL.Models.Service", "Service")
-                        .WithMany()
-                        .HasForeignKey("ServiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Flight");
-
-                    b.Navigation("Service");
-                });
-
-            modelBuilder.Entity("DAL.Models.HotelService", b =>
-                {
-                    b.HasOne("DAL.Models.Service", "Service")
-                        .WithMany()
-                        .HasForeignKey("ServiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Service");
+                    b.Navigation("flight");
                 });
 
             modelBuilder.Entity("DAL.Models.Payment", b =>
