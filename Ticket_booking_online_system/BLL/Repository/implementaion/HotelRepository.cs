@@ -16,28 +16,28 @@ namespace BLL.Repository.implementaion
         }
 
 
-        public IEnumerable<HotelService> GetAllHotels()
-        {
-            return _dbSet
-                .Include(h => h.Location)
-                .ToList();
-        }
+        //public IEnumerable<HotelService> GetAllHotels()
+        //{
+        //    return _dbSet
+        //        .Include(h => h.Location)
+        //        .ToList();
+        //}
 
 
-        public HotelService GetHotelById(int id)
-        {
-            return _dbSet
-                .Include(h => h.Location)
-                .FirstOrDefault(h => h.ServiceID == id);
-        }
+        //public HotelService GetHotelById(int id)
+        //{
+        //    return _dbSet
+        //        .Include(h => h.Location)
+        //        .FirstOrDefault(h => h.ServiceID == id);
+        //}
 
 
-        public IEnumerable<HotelService> SearchByCity(string city)
-        {
-            return _dbSet
-                .Include(h => h.Location)
-                .Where(h => h.Location.City.Contains(city))
-                .ToList();
-        }
+        //public IEnumerable<HotelService> SearchByCity(string city)
+        //{
+        //    return _dbSet
+        //        .Include(h => h.Location)
+        //        .Where(h => h.Location.City.Contains(city))
+        //        .ToList();
+        //}
     }
 }

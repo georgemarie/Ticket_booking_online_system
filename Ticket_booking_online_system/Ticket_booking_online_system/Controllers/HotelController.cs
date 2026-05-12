@@ -12,16 +12,16 @@ namespace Ticket_booking_online_system.Controllers
             _hotelRepo = hotelRepo;
         }
 
-        public IActionResult Index()
-        {
-            var hotels = _hotelRepo.GetAllHotels();
-            return View(hotels);
-        }
+        //public IActionResult Index()
+        //{
+        //    var hotels = _hotelRepo.GetAllHotels();
+        //    return View(hotels);
+        //}
 
-        public IActionResult Search(string city)
-        {
-            var hotels = _hotelRepo.SearchByCity(city);
-            return View("Index", hotels);
-        }
+        //public IActionResult Search(string city)
+        //{
+        //    var hotels = _hotelRepo.SearchByCity(city);
+        //    return View("Index", hotels);
+        //}
     }
 }

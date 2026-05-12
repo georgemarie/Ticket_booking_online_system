@@ -24,12 +24,12 @@ namespace Ticket_booking_online_system.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<Service>()
-                .UseTphMappingStrategy()
-                .HasDiscriminator<string>("ServiceType")
-                .HasValue<FlightService>("Flight")
-                .HasValue<HotelService>("Hotel")
-                .HasValue<TransportationService>("Transportation");
+            //modelBuilder.Entity<Service>()
+            //    .UseTphMappingStrategy()
+            //    .HasDiscriminator<string>("ServiceType")
+            //    .HasValue<FlightService>("Flight")
+            //    .HasValue<HotelService>("Hotel")
+            //    .HasValue<TransportationService>("Transportation");
 
             modelBuilder.Entity<Flight>()
                 .HasOne(f => f.OriginLocation)

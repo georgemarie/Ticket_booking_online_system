@@ -36,7 +36,7 @@ namespace BLL.Services.Implmentation
 
             Booking booking = new Booking()
             {
-               Flight_Number = flight.Flight_Number,
+               //Flight_Number = flight.Flight_Number,
                 UserID = 2,
                 Date = DateTime.Now,
                 Status = "Confirmed"
