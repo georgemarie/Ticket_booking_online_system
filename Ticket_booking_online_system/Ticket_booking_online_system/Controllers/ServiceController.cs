@@ -8,9 +8,6 @@ using RouteAttribute = Microsoft.AspNetCore.Components.RouteAttribute;
 
 namespace Ticket_booking_online_system.Controllers
 {
-    /// <summary>
-    /// /FIX MERGEEE PLZZ
-    /// </summary>
     [Route("Services")]
     //[Authorize]
     public class ServiceController : Controller

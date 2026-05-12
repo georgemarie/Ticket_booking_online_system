@@ -25,8 +25,8 @@ namespace BLL.Repository.implementaion
                     EF.Functions.Like(f.DestLocation.City, $"%{to}%") &&
                     
                     f.Depart_Date >= date.Date &&
-    f.Depart_Date < date.Date.AddDays(1))
-                .ToList();
+                    f.Depart_Date < date.Date.AddDays(1))
+                    .ToList();
         }
         public IEnumerable<Flight> GetAllWithIncludes()
         {
@@ -37,4 +37,4 @@ namespace BLL.Repository.implementaion
                 .ToList();
         }
     }
-    }
+}
