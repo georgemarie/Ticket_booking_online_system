@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DAL.CustomDataAnnotation;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -17,6 +18,7 @@ namespace DAL.Models
         public decimal RefundAmount { get; set; }
 
         [Required(ErrorMessage = "Cancellation Date is required.")]
+        [ValidCancellationDate]
         public DateTime Cancellation_Date { get; set; }
 
         [ForeignKey("Booking")]
