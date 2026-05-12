@@ -6,8 +6,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Ticket_booking_online_system.Controllers
 {
+    /// <summary>
+    /// //////////////////////////////////////NOURRRR
+    /// </summary>
     [Route("User")]
-
     public class UserController : Controller
     {
         private readonly IGenericRepository<User> _userRepository;
@@ -68,7 +70,6 @@ namespace Ticket_booking_online_system.Controllers
         }
         #endregion
 
-
         [HttpGet("GetUserProfile")]
         // GET: /User/GetUserProfile
         public ActionResult Details(int id)
@@ -76,14 +77,12 @@ namespace Ticket_booking_online_system.Controllers
             var user = _userRepository.GetById(id);
             if(user == null) {  return NotFound(); }
             return View(user);
- 
         }
 
         // GET: /User/Create
         [HttpGet("Create")]
         public ActionResult Create()
         {
-
             return View();
         }
         // POST: /User/Create
@@ -94,15 +93,11 @@ namespace Ticket_booking_online_system.Controllers
             if (ModelState.IsValid)
             {
                 model.Created_at = DateTime.Now;
-
                 _userRepository.Add(model);
                 _userRepository.Save();
-
                 return RedirectToAction(nameof(Index));
             }
-
             return View(model);
-        
         }
         // GET: /User/Edit/5
         [HttpGet("Edit/{id:int}")]
@@ -143,8 +138,5 @@ namespace Ticket_booking_online_system.Controllers
 
                 return RedirectToAction(nameof(Index));
             }
-
-        }
-            
- 
-    }
+        }        
+ }
