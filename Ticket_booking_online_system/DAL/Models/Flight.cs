@@ -16,11 +16,14 @@ namespace DAL.Models
 
         [ForeignKey("OriginLocation")]
         [Required(ErrorMessage = "Origin Location is required.")]
+        [EnumDataType(typeof(Country))]
+
         public int Origin_LocationID { get; set; }
         public Location OriginLocation { get; set; }
 
         [ForeignKey("DestLocation")]
         [Required(ErrorMessage = "Destination Location is required.")]
+        [EnumDataType(typeof(Country))]
         public int Dest_LocationID { get; set; }
         public Location DestLocation { get; set; }
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BLL.Custom_Data_Annotation;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
@@ -16,10 +17,12 @@ namespace DAL.Models
 
         [Required(ErrorMessage = "Email is required.")]
         [EmailAddress(ErrorMessage = "Invalid Email Address format.")]
+        [UniqueEmail(ErrorMessage = "Email must be unique.")]
         public string Email { get; set; }
 
         [Required(ErrorMessage = "Passport Number is required.")]
         [StringLength(50, ErrorMessage = "Passport Number cannot exceed 50 characters.")]
+        [UniquePassport(ErrorMessage = "Passport Number must be unique.")]
         public string Passport_num { get; set; }
 
         [Required(ErrorMessage = "Phone number is required.")]
