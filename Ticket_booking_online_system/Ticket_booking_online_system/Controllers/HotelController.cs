@@ -1,83 +1,148 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using BLL.Repository.Interfaces;
+using DAL.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Ticket_booking_online_system.Controllers
 {
     public class HotelController : Controller
     {
-        // GET: HotelController
-        public ActionResult Index()
+        private readonly IHotelRepository _hotelRepo;
+
+        public HotelController(IHotelRepository hotelRepo)
         {
-            return View();
+            _hotelRepo = hotelRepo;
         }
 
-        // GET: HotelController/Details/5
-        public ActionResult Details(int id)
+
+        #region  Admin Responsibilities
+        #region  EditHotel 
+        // GET: Edit
+        [HttpGet]
+        //[Authorize(Roles = "Admin")]
+        public IActionResult Edit(int id)
         {
-            return View();
+            if (id <= 0)
+                return BadRequest();
+
+            var hotel = _hotelRepo.GetById(id);
+
+            if (hotel == null)
+                return NotFound();
+
+            return View(hotel);
         }
 
-        // GET: HotelController/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: HotelController/Create
+        // POST: Edit
+        //[Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public IActionResult Edit(HotelService hotel)
         {
-            try
+            if (hotel == null)
+                return BadRequest();
+            if (ModelState.IsValid)
             {
-                return RedirectToAction(nameof(Index));
+                _hotelRepo.Update(hotel);
+                _hotelRepo.Save();
+
+                return RedirectToAction(nameof(Search));
             }
-            catch
-            {
-                return View();
-            }
+
+            return View(hotel);
         }
 
-        // GET: HotelController/Edit/5
-        public ActionResult Edit(int id)
+        #endregion
+
+        #region  AddingHotel
+        [HttpGet]
+        //[Authorize(Roles = "Admin")]
+        public IActionResult Create()
         {
             return View();
-        }
 
-        // POST: HotelController/Edit/5
-        [HttpPost]
+        }
+        //[Authorize(Roles = "Admin")]
+        [HttpPost("Create")]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public IActionResult Create(HotelService hotel)
         {
-            try
+            if (ModelState.IsValid)
             {
-                return RedirectToAction(nameof(Index));
+                _hotelRepo.Add(hotel);
+                _hotelRepo.Save();
+                return RedirectToAction("Search");
             }
-            catch
-            {
-                return View();
-            }
+            return View(hotel);
+        }
+        #endregion
+
+
+        #region Delete Hotel
+        // GET: Delete
+        [HttpGet]
+        //[Authorize(Roles = "Admin")]
+        public IActionResult Delete(int id)
+        {
+            if (id <= 0)
+                return BadRequest();
+
+            var hotel = _hotelRepo.GetById(id);
+
+            if (hotel == null)
+                return NotFound();
+
+            return View(hotel);
         }
 
-        // GET: HotelController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: HotelController/Delete/5
-        [HttpPost]
+        // POST: Delete
+        //[Authorize(Roles = "Admin")]
+        [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public IActionResult DeleteConfirmed(int id)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            var hotel = _hotelRepo.GetById(id);
+
+            if (hotel == null)
+                return NotFound();
+
+            _hotelRepo.Delete(hotel);
+            _hotelRepo.Save();
+
+            return RedirectToAction(nameof(Search));
+        }
+
+
+
+        #endregion
+
+
+        #endregion
+
+
+        public IActionResult Search()
+        {
+            var hotels = _hotelRepo.GetAllWithIncludes();
+
+            return View(hotels);
+        }
+
+        public IActionResult Results(string city)
+        {
+            var hotels = _hotelRepo.Search(city);
+
+            return View("Search", hotels);
+        }
+
+        public IActionResult Details(int serviceId)
+        {
+            var hotel =
+                _hotelRepo.GetAllWithIncludes()
+                .FirstOrDefault(h => h.ServiceId == serviceId);
+
+            if (hotel == null)
+                return NotFound();
+
+            return View(hotel);
         }
     }
 }

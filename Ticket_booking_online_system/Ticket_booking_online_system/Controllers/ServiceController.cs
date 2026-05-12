@@ -12,9 +12,9 @@ namespace Ticket_booking_online_system.Controllers
     //[Authorize]
     public class ServiceController : Controller
     {
-        public IServiceRepository _ServiceRepository { get; }
-        public IFlightServiceRepository _FlightService { get; }
-        public IHotelRepository _HotelRepository { get; }
+        private IServiceRepository _ServiceRepository { get; }
+        private IFlightServiceRepository _FlightService { get; }
+        private IHotelRepository _HotelRepository { get; }
 
         public ServiceController(IServiceRepository serviceRepository, IFlightServiceRepository flightService, IHotelRepository hotelRepository)
         {
@@ -22,6 +22,8 @@ namespace Ticket_booking_online_system.Controllers
             _FlightService = flightService;
             _HotelRepository = hotelRepository;
         }
+
+        // GET: Services
         //[AllowAnonymous]
         [HttpGet("")]
         public ActionResult Index()
@@ -51,7 +53,7 @@ namespace Ticket_booking_online_system.Controllers
             return View("SearchHotels", avaliableHotels);
         }
 
-        // GET: ServiceController/Details/5
+        // GET: Services/Details/5
         //[Authorize(Roles = "Admin")]
         [HttpGet("Details/{id}")]
         public ActionResult Details(int id)
@@ -60,7 +62,8 @@ namespace Ticket_booking_online_system.Controllers
             return View(service);
         }
 
-        // GET: ServiceController/Create
+        #region Admin Controllers
+        // GET: Services/Create
         //[Authorize(Roles = "Admin")]
         [HttpGet("Create")]
         public ActionResult Create()
@@ -68,13 +71,13 @@ namespace Ticket_booking_online_system.Controllers
             return View();
         }
 
-        // POST: ServiceController/Create
+        // POST: Services/Create
         //[Authorize(Roles = "Admin")]
         [HttpPost("Create")]
         [ValidateAntiForgeryToken]
         public ActionResult Create(Service service)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 _ServiceRepository.Add(service);
                 return RedirectToAction(nameof(Index));
@@ -85,23 +88,26 @@ namespace Ticket_booking_online_system.Controllers
             }
         }
 
-        // GET: ServiceController/Edit/5
+        // GET: Services/Edit/5
         //[Authorize(Roles = "Admin")]
         [HttpGet("Edit/{id}")]
         public ActionResult Edit(int id)
         {
-            return View();
+            if (id < 0) return BadRequest();
+            var service = _ServiceRepository.GetById(id);
+            if (service == null) return NotFound();
+            return View(service);
         }
 
-        // POST: ServiceController/Edit/5
+        // POST: Services/Edit/5
         //[Authorize(Roles = "Admin")]
-        [HttpPost("Edit/{id}")]
+        [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(Service service)
         {
             var editService = _ServiceRepository.GetById(service.ServiceID);
             if (editService == null) return NotFound();
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 _ServiceRepository.Update(editService);
                 return RedirectToAction(nameof(Index));
@@ -112,16 +118,19 @@ namespace Ticket_booking_online_system.Controllers
             }
         }
 
-        // GET: ServiceController/Delete/5
+        // GET: Services/Delete/5
         //[Authorize(Roles = "Admin")]
         [HttpGet("Delete/{id}")]
         public ActionResult Delete(int id)
         {
-            return View();
+            if (id < 0) return BadRequest();
+            var service = _ServiceRepository.GetById(id);
+            if (service == null) return NotFound();
+            return View(service);
         }
-        // POST: ServiceController/Delete/5
+        // POST: Services/Delete/5
         //[Authorize(Roles = "Admin")]
-        [HttpPost("Delete/{id}")]
+        [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Delete(Service service)
         {
@@ -136,6 +145,7 @@ namespace Ticket_booking_online_system.Controllers
             {
                 return View(service);
             }
-        }
+        } 
+        #endregion
     }
 }
