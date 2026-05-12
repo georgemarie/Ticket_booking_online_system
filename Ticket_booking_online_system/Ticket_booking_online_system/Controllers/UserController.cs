@@ -6,9 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Ticket_booking_online_system.Controllers
 {
-    /// <summary>
-    /// //////////////////////////////////////NOURRRR
-    /// </summary>
     [Route("User")]
     public class UserController : Controller
     {
