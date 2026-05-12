@@ -4,7 +4,7 @@ using System.Text;
 
 namespace BLL.Repository.Interfaces
 {
-    public interface IServiceRepository
+    public interface IServiceRepository:IGenericRepository<T> where T : class
     {
     }
 }
