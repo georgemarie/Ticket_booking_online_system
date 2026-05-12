@@ -22,17 +22,16 @@ namespace BLL.Services.Implmentation
         }
 
 
-        public bool CreateBooking(int serviceId)
+        public bool CreateBooking(int serviceId,int userId)
         {
             Booking booking = new Booking()
             {
                 ServiceID = serviceId,
-
-                UserID = 2,
-
+                UserID = userId,    
+          
                 Date = DateTime.Now,
 
-                Status = "Confirmed"
+                Status = BookingStatus.Pending,
             };
 
             _bookingRepo.Add(booking);
@@ -55,11 +54,16 @@ namespace BLL.Services.Implmentation
             if (booking == null)
                 return false;
 
-            _bookingRepo.Cancel(bookingId);
+            if (booking.Status == BookingStatus.Confirmed)
+                return false;
 
+            booking.Status = BookingStatus.Cancelled;
+
+            _bookingRepo.Update(booking);
             _bookingRepo.Save();
 
             return true;
         }
     }
     }
+    

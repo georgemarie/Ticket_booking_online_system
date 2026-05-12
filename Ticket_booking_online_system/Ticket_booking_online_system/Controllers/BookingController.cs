@@ -1,57 +1,137 @@
 ﻿using BLL.Repository.Interfaces;
 using BLL.Services.interfaces;
-using BLL.Services.interfaces;
+using DAL.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq;
 
 namespace Ticket_booking_online_system.Controllers
 {
+    [Route("Booking")]
+
     public class BookingController : Controller
     {
         private readonly IBookingService _bookingService;
-        private readonly IFlightRepository _flightRepo;
-
-        public BookingController(
-            IBookingService bookingService,
-            IFlightRepository flightRepo)
+        private readonly IBookingRepository _bookingRepository;
+    
+        public BookingController(IBookingService bookingService, IBookingRepository bookingRepository)
         {
             _bookingService = bookingService;
-            _flightRepo = flightRepo;
+            _bookingRepository = bookingRepository;
         }
+        #region Get All 
+       // [Authorization(Roles = "Admin")]
 
-        public IActionResult Index(int userId=2)
+        #region ALL BOOKINGS
+        [HttpGet("")]
+        [HttpGet("Index")]
+        public IActionResult Index()
         {
-            var bookings = _bookingService.GetUserBookings(userId);
+            var bookings = _bookingRepository.GetAll();
             return View(bookings);
         }
+        #endregion
+        #endregion
+        #region UserBookings
 
-
-        
-
-        [HttpPost]
-        public IActionResult CreateBooking(int serviceId)
+        // GET: /Booking/UserBookings/5
+        [HttpGet("UserBookings/{userId:int}")]
+        public IActionResult UserBookings(int userId)
         {
-            bool result =
-                _bookingService
-                    .CreateBooking(serviceId);
+            var bookings = _bookingRepository.GetUserBookings(userId);
+            return View(bookings);
+        }
+        #endregion
+        #region Details Of Booking
+
+        // GET: /Booking/Details/5
+        [HttpGet("Details/{id:int}")]
+        public IActionResult Details(int id)
+        {
+            var booking = _bookingRepository.GetBookingWithDetails(id);
+
+            if (booking == null)
+                return NotFound();
+
+            return View(booking);
+        }
+
+        #endregion
+
+        #region Create Booking
+
+        // GET: /Booking/Create
+        [HttpGet("Create")]
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        // POST: /Booking/Create
+        [HttpPost("Create")]
+        [ValidateAntiForgeryToken]
+        public IActionResult Create(Booking model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+            //MUST BE LOGGINED 
+           // int userId = model.UserID;
+
+            _bookingService.CreateBooking(model.ServiceID, model.UserID);
+            return RedirectToAction(nameof(UserBookings), new { userId = model.UserID });
+        }
+
+        #endregion
+
+        #region Edit booking 
+        [HttpGet("Edit/{id:int}")]
+        public IActionResult Edit(int id)
+        {
+            var booking = _bookingRepository.GetById(id);
+
+            if (booking == null)
+                return NotFound();
+
+            return View(booking);
+        }
+     
+        [HttpPost("Edit")]
+        [ValidateAntiForgeryToken]
+        public IActionResult Edit( Booking model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var booking = _bookingRepository.GetById(model.BookingID);
+
+            if (booking == null)
+                return NotFound();
+
+            
+            booking.Date = model.Date;
+            booking.ServiceID = model.ServiceID;
+
+            _bookingRepository.Update(booking);
+            _bookingRepository.Save();
+
+            return RedirectToAction(nameof(Index));
+        }
+        #endregion
+        #region Cancel Booking
+        // POST: /Booking/Cancel/5
+        [HttpPost("Cancel/{id:int}")]
+        [ValidateAntiForgeryToken]
+        public IActionResult Cancel(int id)
+        {
+            var result = _bookingService.CancelBooking(id);
 
             if (!result)
-                return Content("Booking Failed");
+                return BadRequest("Cannot cancel this booking");
 
-            return RedirectToAction(
-                "Index",
-                "Booking");
+            return RedirectToAction(nameof(Index));
         }
 
 
-        public IActionResult Cancel(int id, int userId)
-        {
-            bool result = _bookingService.CancelBooking(id);
+        #endregion
 
-            if (!result)
-                return Content("Cancel Failed ❌");
-
-            return RedirectToAction("Index", new { userId = userId });
-        }
     }
 }
