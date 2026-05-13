@@ -39,7 +39,7 @@ namespace BLL.Repository.implementaion
 
             if (booking != null)
             {
-                booking.Status = "Cancelled";
+                booking.Status = BookingStatus.Cancelled;
                 _context.Bookings.Update(booking);
             }
         }

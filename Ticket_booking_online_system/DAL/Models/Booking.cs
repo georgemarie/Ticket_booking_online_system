@@ -5,7 +5,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
 namespace DAL.Models
-{
+{   public enum BookingStatus
+    {
+        Pending,
+        Confirmed,
+        Cancelled
+    }
     public class Booking
     {
         [Key]
@@ -16,7 +21,7 @@ namespace DAL.Models
 
         [Required(ErrorMessage = "Status is required.")]
         [StringLength(50, ErrorMessage = "Status cannot exceed 50 characters.")]
-        public string Status { get; set; }
+        public BookingStatus Status { get; set; }
 
         [ForeignKey("User")]
         [Required(ErrorMessage = "User is required.")]
@@ -24,8 +29,8 @@ namespace DAL.Models
         public User User { get; set; }
 
         [ForeignKey("Service")]
-        public int? ServiceID { get; set; }
-        public Service Service { get; set; }
+        public int ServiceID { get; set; }
+        public Service? Service { get; set; }
 
         //[ForeignKey("Flight")]
         //public string Flight_Number { get; set; }

@@ -5,8 +5,7 @@ using System.Text;
 
 namespace BLL.Repository.Interfaces
 {
-    public interface IServiceRepository : IGenericRepository<Service>
+    public interface IReviewRepository: IGenericRepository<Review>
     {
     }
 }
-
