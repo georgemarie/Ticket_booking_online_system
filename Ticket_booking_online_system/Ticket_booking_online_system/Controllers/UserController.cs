@@ -12,8 +12,8 @@ namespace Ticket_booking_online_system.Controllers
         private readonly IGenericRepository<User> _userRepository;
 
         // GET: UserController
-        public UserController(IGenericRepository<User> userRepository) 
-        { 
+        public UserController(IGenericRepository<User> userRepository)
+        {
             _userRepository = userRepository;
         }
 
@@ -45,26 +45,24 @@ namespace Ticket_booking_online_system.Controllers
         }
 
 
-     
+
         // [Authorize(Roles = "Admin")]
         // POST: /User/Delete/5
         [HttpPost("Delete/{id:int}")]
         [ValidateAntiForgeryToken]
-
-        public ActionResult Delete(User model)
+        public ActionResult DeleteConfirmed(int id)
         {
-            if (ModelState.IsValid)
+
+            var user = _userRepository.GetById(id);
+            if (user == null)
             {
-                var user = _userRepository.GetById(model.UserID);
-                if (user == null)
-                {
-                    return NotFound();
-                }
-                _userRepository.Delete(user);
-                _userRepository.Save();
-                return RedirectToAction(nameof(Index));
+                return NotFound();
             }
-            return View();
+
+            _userRepository.Delete(user);
+            _userRepository.Save();
+
+            return RedirectToAction(nameof(Index));
         }
         #endregion
 
@@ -73,7 +71,7 @@ namespace Ticket_booking_online_system.Controllers
         public ActionResult Details(int id)
         {
             var user = _userRepository.GetById(id);
-            if(user == null) {  return NotFound(); }
+            if (user == null) { return NotFound(); }
             return View(user);
         }
 
@@ -88,6 +86,10 @@ namespace Ticket_booking_online_system.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(User model)
         {
+            ModelState.Remove("Created_at");
+            ModelState.Remove("Reviews");
+            ModelState.Remove("Bookings");
+            ModelState.Remove("Payments");
             if (ModelState.IsValid)
             {
                 model.Created_at = DateTime.Now;
@@ -102,7 +104,7 @@ namespace Ticket_booking_online_system.Controllers
         public ActionResult Edit(int id)
         {
             var user = _userRepository.GetById(id);
-            if(user == null)
+            if (user == null)
             {
                 return NotFound();
             }
@@ -112,29 +114,39 @@ namespace Ticket_booking_online_system.Controllers
 
         // POST: /User/Edit/5
         [ValidateAntiForgeryToken]
-        [HttpPost("Edit")]
-        public ActionResult Edit( User model)
+        [HttpPost("Edit/{id:int}")] 
+        public ActionResult Edit(int id, User model)
         {
-                if (!ModelState.IsValid)
-                {
-                    return View(model);
-                }
-                var user = _userRepository.GetById(model.UserID);
-                if (user == null)
-                {
-                    return NotFound();
-                }
+            ModelState.Remove("Created_at");
+            ModelState.Remove("Reviews");
+            ModelState.Remove("Bookings");
+            ModelState.Remove("Payments");
 
-                user.Name = model.Name;
-                user.Email = model.Email;
-                user.Phone = model.Phone;
-                user.Passport_num = model.Passport_num;
-                  //user.Role = model.Role;      
-
-               _userRepository.Update(user);
-                _userRepository.Save();
-
-                return RedirectToAction(nameof(Index));
+            if (!ModelState.IsValid)
+            {
+                return View(model);
             }
-        }        
- }
+
+            if (id != model.UserID)
+            {
+                return BadRequest();
+            }
+
+            var user = _userRepository.GetById(id);
+            if (user == null)
+            {
+                return NotFound(); 
+            }
+
+            user.Name = model.Name;
+            user.Email = model.Email;
+            user.Phone = model.Phone;
+            user.Passport_num = model.Passport_num;
+
+            _userRepository.Update(user);
+            _userRepository.Save();
+
+            return RedirectToAction(nameof(Index));
+        }
+    }
+}

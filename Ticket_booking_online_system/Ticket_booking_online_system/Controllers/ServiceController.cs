@@ -28,8 +28,10 @@ namespace Ticket_booking_online_system.Controllers
         [HttpGet("")]
         public ActionResult Index()
         {
-            return View();
+            var services = _ServiceRepository.GetAll(); 
+            return View(services);
         }
+
         [HttpPost("SearchFlights")] // Matches: /Services/SearchFlights
         public ActionResult SearchFlights(string from, string to, DateTime date)
         {
