@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -20,10 +21,11 @@ namespace DAL.Models
         [ForeignKey("Location")]
         [Required(ErrorMessage = "Location is required.")]
         public int LocationID { get; set; }
-        public Location Location { get; set; }
+        [BindNever]
+        public Location? Location { get; set; }
 
-        public ICollection<Review> Reviews { get; set; }
-        public ICollection<Booking> Bookings { get; set; }
+        public ICollection<Review> Reviews { get; set; } = new List<Review>();
+        public ICollection<Booking> Bookings { get; set; } = new List<Booking>();
     }
 
 }

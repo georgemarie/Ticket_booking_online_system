@@ -30,7 +30,7 @@ namespace BLL.Repository.implementaion
             return _dbSet.Find(id);
         }
 
-        public void Add(T entity)
+        virtual public void Add(T entity)
         {
             _dbSet.Add(entity);
         }

@@ -1,42 +1,106 @@
-﻿@model DAL.Models.FlightService
+﻿@using DAL.Models
+@model DAL.Models.FlightService
+@* 
 @{
-    ViewData["Title"] = "Add Flight";
-}
+    ViewData["Title"] = "Add Flight Service";
+} *@
 
-<h1>Add Flight Service</h1>
+<h1>Add New Flight</h1>
 <hr />
-
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-6">
         <form asp-action="Create">
+            @* <div asp-validation-summary="ModelOnly" class="text-danger"></div> *@
             <div asp-validation-summary="All" class="text-danger"></div>
 
-            <div class="form-group mb-3">
-                <label asp-for="Flight_Number" class="control-label">Flight Number</label>
-                <select asp-for="Flight_Number" class="form-control" asp-items="ViewBag.Flights">
-                    <option value="">-- Select Flight --</option>
-                </select>
-                <span asp-validation-for="Flight_Number" class="text-danger"></span>
+            <div class="card mb-3">
+                <div class="card-header bg-primary text-white">Flight Details</div>
+                <div class="card-body">
+                    
+                    <div class="form-group mb-2">
+                        <label asp-for="Flight.Flight_Number" class="control-label"></label>
+                        <input asp-for="Flight.Flight_Number" class="form-control" placeholder="e.g. MS737" />
+                        <span asp-validation-for="Flight.Flight_Number" class="text-danger"></span>
+                    </div>
+                    <div class="form-group mb-2">
+                        <label asp-for="Flight.Arrival_Time" class="control-label"></label>
+                        <input asp-for="Flight.Arrival_Time" type="datetime-local" class="form-control" />
+                        <span asp-validation-for="Flight.Arrival_Time" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group mb-2">
+                            
+                            <label>Origin City</label>
+                            <select asp-for="Flight.Origin_LocationID" class="form-control" asp-items="ViewBag.Locations">
+                                <option value="0">-- Select Origin --</option>
+                            </select>
+                            <span asp-validation-for="Flight.Origin_LocationID" class="text-danger"></span>
+
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group mb-2">
+                            
+                            <label>Destination City</label>
+                            <select asp-for="Flight.Dest_LocationID" class="form-control" asp-items="ViewBag.Locations">
+                                <option value="0">-- Select Destination --</option>
+                            </select>
+                            <span asp-validation-for="Flight.Dest_LocationID" class="text-danger"></span>
+
+                        </div>
+                    </div>
+
+                    <div class="form-group mb-2">
+                        <label asp-for="Flight.Depart_Date" class="control-label"></label>
+                        <input asp-for="Flight.Depart_Date" type="datetime-local" class="form-control" />
+                    </div>
+                </div>
             </div>
 
-            <div class="form-group mb-3">
-                <label asp-for="ServiceId" class="control-label">Service</label>
-                <select asp-for="ServiceId" class="form-control" asp-items="ViewBag.Services">
-                    <option value="">-- Select Service --</option>
-                </select>
-                <span asp-validation-for="ServiceId" class="text-danger"></span>
+            <div class="card mb-3">
+                <div class="card-header bg-success text-white">Pricing & Service Info</div>
+                <div class="card-body">
+                    <div class="form-group mb-2">
+                        <label asp-for="Service.BasePrice" class="control-label">Ticket Price</label>
+                        <input asp-for="Service.BasePrice" class="form-control" type="number" step="0.01" />
+                        <span asp-validation-for="Service.BasePrice" class="text-danger"></span>
+                    </div>
+                    @* Set the ServiceType automatically *@
+                    <input type="hidden" asp-for="Service.ServiceType" value="Flight" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Airline</label>
+                        @* Use BOTH name and asp-for to ensure the binder hits it no matter what *@
+                        <select asp-for="Flight.Airline_ID" class="form-control" asp-items="ViewBag.Airlines">
+                            <option value="0">-- Select Airline --</option>
+                        </select>
+                        <span asp-validation-for="Flight.Airline_ID" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-2">
+                        <label asp-for="Flight.Available_Seats" class="control-label"></label>
+                        <input asp-for="Flight.Available_Seats" class="form-control" type="number" />
+                    </div>
+                </div>
             </div>
 
+                <div class="form-group mb-2">
+                    <label asp-for="Flight.Class" class="control-label"></label>
+                    <select asp-for="Flight.Class" class="form-control"
+                            asp-items="@Html.GetEnumSelectList<DAL.Models.FlightClass>()">
+                    </select>
+                    <span asp-validation-for="Flight.Class" class="text-danger"></span>
+                </div>
+        
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-                <a asp-action="Index" class="btn btn-secondary">Back</a>
+                <input type="submit" value="Save Flight" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-secondary">Cancel</a>
             </div>
         </form>
     </div>
 </div>
-
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-}

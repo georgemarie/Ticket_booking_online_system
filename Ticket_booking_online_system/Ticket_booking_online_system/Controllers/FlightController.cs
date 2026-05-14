@@ -5,6 +5,8 @@ using DAL.Models;
 using DAL.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 
 namespace Ticket_booking_online_system.Controllers
 {
@@ -13,9 +15,13 @@ namespace Ticket_booking_online_system.Controllers
     public class FlightController : Controller
     {
         private readonly IFlightServiceRepository _flightRepo;
-        public FlightController(IFlightServiceRepository flightRepo)
+        private readonly IAirlineRepository _airlineRepo;
+        private readonly ILocationRepository _locRepo;
+        public FlightController(IFlightServiceRepository flightRepo, IAirlineRepository airlineRepo, ILocationRepository locRepo)
         {
             _flightRepo = flightRepo;
+            _airlineRepo = airlineRepo;
+            _locRepo = locRepo;
         }
 
         // GET: Flights
@@ -44,22 +50,104 @@ namespace Ticket_booking_online_system.Controllers
         [HttpGet("Create")]
         public ActionResult Create()
         {
-            return View();
+            var airlines = _airlineRepo.GetAll();
+            // NEW: Load real locations from your repository
+            // Replace '_locationRepo' with whatever your Location repository is named
+            var locations = _locRepo.GetAll();
+
+            ViewBag.Airlines = new SelectList(airlines, "Airline_ID", "Airline_Name");
+            ViewBag.Locations = new SelectList(locations, "LocationID", "City"); // ID and City name
+
+            var model = new FlightService { Flight = new Flight(), Service = new Service() };
+            return View(model);
         }
 
         // POST: Flights/Create
         //[Authorize(Roles = "Admin")]
+        //[HttpPost("Create")]
+        //public ActionResult Create(FlightService flight)
+        //{
+        //    if (flight.Flight == null)
+        //    {
+        //        flight.Flight = new Flight
+        //        {
+        //            Flight_Number = flight.Flight_Number,
+        //            // These won't be set here — they come from the form via Flight.xxx binding
+        //            // So instead, just ensure the binder works by checking below
+        //        };
+        //    }
+
+        //    Console.WriteLine($"After fix — Flight null: {flight.Flight == null}");
+        //    Console.WriteLine($"Flight_Number: {flight.Flight?.Flight_Number}");
+
+        //    ModelState.Remove("Flight");
+        //    ModelState.Remove("Service");
+        //    ModelState.Remove("Flight.Airline");
+        //    ModelState.Remove("Flight.Airline_ID");
+        //    ModelState.Remove("Flight.OriginLocation");
+        //    ModelState.Remove("Flight.DestLocation");
+        //    ModelState.Remove("Service.Location");
+
+        //    if (ModelState.IsValid)
+        //    {
+        //        _flightRepo.Add(flight);   // saves Service + Flight inside
+        //        _flightRepo.Save();        // saves FlightService
+        //        return RedirectToAction(nameof(Index));
+        //    }
+
+        //    ViewBag.Airlines = new SelectList(_airlineRepo.GetAll(), "Airline_ID", "Airline_Name");
+        //    return View(flight);
+        //}
         [HttpPost("Create")]
-        public ActionResult Create(FlightService flight)
+        [ValidateAntiForgeryToken]
+        public IActionResult Create(FlightService model)
         {
-            if (ModelState.IsValid)
+            model.Flight ??= new Flight();
+            model.Service ??= new Service();
+
+            // ✅ assign derived fields BEFORE validation
+            model.Flight_Number = model.Flight.Flight_Number;
+            model.Service.ServiceType = "Flight";
+            model.Service.LocationID = model.Flight.Origin_LocationID;
+
+            // ✅ clear ModelState for fields we set manually
+            ModelState.Remove(nameof(FlightService.Flight_Number));
+            ModelState.Remove("Service.ServiceType");
+            ModelState.Remove("Service.LocationID");
+
+            // ✅ remove validation for navigation props we don't bind
+            ModelState.Remove("Flight.Airline");
+            ModelState.Remove("Flight.OriginLocation");
+            ModelState.Remove("Flight.DestLocation");
+            ModelState.Remove("Flight.Bookings");
+
+            ModelState.Remove("Service.Location");
+            ModelState.Remove("Service.Reviews");
+            ModelState.Remove("Service.Bookings");
+
+            // ✅ validate nested objects (since you used ValidateNever earlier)
+            TryValidateModel(model.Flight, "Flight");
+            TryValidateModel(model.Service, "Service");
+
+            if (!ModelState.IsValid)
             {
-                _flightRepo.Add(flight);
+                ViewBag.Airlines = new SelectList(_airlineRepo.GetAll(), "Airline_ID", "Airline_Name", model.Flight.Airline_ID);
+                ViewBag.Locations = new SelectList(_locRepo.GetAll(), "LocationID", "City");
+                return View(model);
+            }
+
+            try
+            {
+                _flightRepo.Add(model);
+                _flightRepo.Save();
                 return RedirectToAction(nameof(Index));
             }
-            else
+            catch (Exception ex)
             {
-                return View(flight);
+                ModelState.AddModelError("", "Database Error: " + (ex.InnerException?.Message ?? ex.Message));
+                ViewBag.Airlines = new SelectList(_airlineRepo.GetAll(), "Airline_ID", "Airline_Name", model.Flight.Airline_ID);
+                ViewBag.Locations = new SelectList(_locRepo.GetAll(), "LocationID", "City");
+                return View(model);
             }
         }
 

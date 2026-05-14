@@ -11,7 +11,7 @@
     </div>
 
     <table class="table table-hover table-bordered shadow-sm">
-        <thead class="thead-dark">
+        <thead class="thead-dark bg-dark text-white">
             <tr>
                 <th>Hotel Name</th>
                 <th>Room Type</th>
@@ -23,35 +23,45 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model)
+            @if (Model != null && Model.Any())
+            {
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            <strong>@item.Hotel_Name</strong>
+                        </td>
+                        <td>
+                            @item.Room_Type
+                        </td>
+                        <td>
+                            @* Using the null-conditional operator for safety *@
+                            @(item.Service?.Location?.City ?? "N/A")
+                        </td>
+                        <td>
+                            @* Using ToString("d") is much safer for Nullable DateTime *@
+                            @(item.Check_In?.ToString("yyyy-MM-dd") ?? "N/A")
+                        </td>
+                        <td>
+                            @(item.Check_Out?.ToString("yyyy-MM-dd") ?? "N/A")
+                        </td>
+                        <td>
+                            <span class="text-success fw-bold">
+                                @(item.Service?.BasePrice.ToString("C") ?? "0.00")
+                            </span>
+                        </td>
+                        <td>
+                            <a asp-action="Details" asp-controller="Hotel" asp-route-id="@item.ServiceId" class="btn btn-sm btn-primary">
+                                Book Room
+                            </a>
+                        </td>
+                    </tr>
+                }
+            }
+            else
             {
                 <tr>
-                    <td>
-                        <strong>@Html.DisplayFor(modelItem => item.Hotel_Name)</strong>
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Room_Type)
-                    </td>
-                    <td>
-                        @* Accessing Location through the Service navigation *@
-                        @item.Service?.Location?.City
-                    </td>
-                    <td>
-                        @* Check if has value, then call .Value.ToShortDateString() *@
-                        @(item.Check_In.HasValue ? item.Check_In.Value.ToShortDateString() : "N/A")
-                    </td>
-                    <td>
-                        @(item.Check_Out.HasValue ? item.Check_Out.Value.ToShortDateString() : "N/A")
-                    </td>
-                    <td>
-                        @* Accessing Price from the parent Service table *@
-                        <span class="text-success fw-bold">
-                            @Html.DisplayFor(modelItem => item.Service.BasePrice)
-                        </span>
-                    </td>
-                    <td>
-                        <a asp-action="Details" asp-route-id="@item.ServiceId" class="btn btn-sm btn-primary">Book Room</a>
-                    </td>
+                    <td colspan="7" class="text-center">No hotels found for the selected criteria.</td>
                 </tr>
             }
         </tbody>
