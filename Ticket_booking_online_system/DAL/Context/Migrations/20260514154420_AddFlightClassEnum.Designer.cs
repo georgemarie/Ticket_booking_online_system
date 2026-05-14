@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Ticket_booking_online_system.Data;
 
@@ -11,9 +12,11 @@ using Ticket_booking_online_system.Data;
 namespace Ticket_booking_online_system.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260514154420_AddFlightClassEnum")]
+    partial class AddFlightClassEnum
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -82,13 +85,14 @@ namespace Ticket_booking_online_system.Data.Migrations
                     b.Property<int>("Airline_ID")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("Arrival_Time")
+                    b.Property<DateTime>("Arrival_Time")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("Available_Seats")
                         .HasColumnType("int");
 
                     b.Property<int>("Class")
+                        .HasMaxLength(50)
                         .HasColumnType("int");
 
                     b.Property<DateTime>("Depart_Date")

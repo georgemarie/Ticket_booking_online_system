@@ -10,5 +10,6 @@ namespace BLL.Repository.Interfaces
     {
         IEnumerable<FlightService> GetAllWithIncludes();
         public IEnumerable<FlightService> Search(string from, string to, DateTime date);
+        FlightService? GetByIdWithIncludes(int id);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using BLL.Repository.Interfaces;
 using DAL.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -20,6 +21,11 @@ namespace BLL.Repository.implementaion
             _context = context;
         }
 
-
+        override public IEnumerable<Service> GetAll()
+        {
+            return _context.Services
+                           .Include(s => s.Location)
+                           .ToList();
+        }
     }
 }

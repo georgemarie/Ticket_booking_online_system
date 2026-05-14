@@ -1,0 +1,89 @@
+﻿@using DAL.Models
+@model DAL.Models.FlightService
+
+@{
+    ViewData["Title"] = "Delete Flight";
+}
+
+<h1 class="text-danger">Delete Flight</h1>
+<p class="text-muted">Are you sure you want to delete this flight service? This action cannot be undone.</p>
+<hr />
+
+<div class="row">
+    <div class="col-md-8">
+
+        <div class="card mb-3 border-danger">
+            <div class="card-header bg-danger text-white">
+                Flight Details
+            </div>
+            <div class="card-body">
+
+                <div class="row mb-2">
+                    <div class="col-md-6">
+                        <strong>Flight Number:</strong>
+                        <div>@(Model.Flight?.Flight_Number ?? "N/A")</div>
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Airline:</strong>
+                        <div>@(Model.Flight?.Airline?.Airline_Name ?? "N/A")</div>
+                    </div>
+                </div>
+
+                <div class="row mb-2">
+                    <div class="col-md-6">
+                        <strong>Origin City:</strong>
+                        <div>@(Model.Flight?.OriginLocation?.City ?? "N/A")</div>
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Destination City:</strong>
+                        <div>@(Model.Flight?.DestLocation?.City ?? "N/A")</div>
+                    </div>
+                </div>
+
+                <div class="row mb-2">
+                    <div class="col-md-6">
+                        <strong>Depart Date:</strong>
+                        @* Added formatting to prevent the ToString error *@
+                        <div>@(Model.Flight?.Depart_Date.ToString("yyyy-MM-dd HH:mm") ?? "N/A")</div>
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Arrival Time:</strong>
+                        <div>@(Model.Flight?.Arrival_Time?.ToString("yyyy-MM-dd HH:mm") ?? "N/A")</div>
+                    </div>
+                </div>
+
+                <div class="row mb-2">
+                    <div class="col-md-6">
+                        <strong>Available Seats:</strong>
+                        <div>@Model.Flight?.Available_Seats</div>
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Class:</strong>
+                        <div>@Model.Flight?.Class</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="card mb-3 border-warning">
+            <div class="card-header bg-warning">
+                Service / Pricing
+            </div>
+            <div class="card-body">
+                <strong>Ticket Price:</strong>
+                <div>@(Model.Service?.BasePrice.ToString("C") ?? "0.00")</div>
+            </div>
+        </div>
+
+        @* FIXED: Corrected the form tag and closed it properly *@
+        <form asp-action="Delete" asp-route-id="@Model.Id" method="post">
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="ServiceId" />
+            <input type="hidden" asp-for="Flight_Number" />
+
+            <button type="submit" class="btn btn-danger">Yes, Delete</button>
+            <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+        </form>
+    </div>
+</div>

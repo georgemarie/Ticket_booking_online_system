@@ -1,0 +1,43 @@
+﻿@model IEnumerable<DAL.Models.FlightService>
+
+@{
+    ViewData["Title"] = "Search Results";
+}
+
+<div class="container mt-4">
+    <h2>Available Flights</h2>
+
+    <table class="table table-striped table-bordered">
+        <thead class="thead-dark">
+            <tr>
+                <th>Flight No</th>
+                <th>Airline</th>
+                <th>From</th>
+                <th>To</th>
+                <th>Departure</th>
+                <th>Price</th> @* The BasePrice from Service *@
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.Flight.Flight_Number)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Flight.Airline.Airline_Name)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Flight.OriginLocation.City)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Flight.DestLocation.City)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Flight.Depart_Date)</td>
+                    <td>
+                        <strong>@Html.DisplayFor(modelItem => item.Service.BasePrice)</strong>
+                    </td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@item.ServiceId" class="btn btn-primary btn-sm">Book Now</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    
+    <a asp-action="Index" class="btn btn-secondary">Back to Search</a>
+</div>

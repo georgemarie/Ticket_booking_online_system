@@ -20,7 +20,7 @@ namespace BLL.Repository.implementaion
             _dbSet = context.Set<T>();
         }
 
-        public IEnumerable<T> GetAll()
+        virtual public IEnumerable<T> GetAll()
         {
             return _dbSet.ToList();
         }
@@ -30,7 +30,7 @@ namespace BLL.Repository.implementaion
             return _dbSet.Find(id);
         }
 
-        public void Add(T entity)
+        virtual public void Add(T entity)
         {
             _dbSet.Add(entity);
         }

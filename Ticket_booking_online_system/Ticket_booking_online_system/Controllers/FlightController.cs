@@ -5,17 +5,23 @@ using DAL.Models;
 using DAL.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 
 namespace Ticket_booking_online_system.Controllers
 {
-    [Route("Flights")]
+    [Route("Flight")]
     //[Authorize]
     public class FlightController : Controller
     {
         private readonly IFlightServiceRepository _flightRepo;
-        public FlightController(IFlightServiceRepository flightRepo)
+        private readonly IAirlineRepository _airlineRepo;
+        private readonly ILocationRepository _locRepo;
+        public FlightController(IFlightServiceRepository flightRepo, IAirlineRepository airlineRepo, ILocationRepository locRepo)
         {
             _flightRepo = flightRepo;
+            _airlineRepo = airlineRepo;
+            _locRepo = locRepo;
         }
 
         // GET: Flights
@@ -44,52 +50,125 @@ namespace Ticket_booking_online_system.Controllers
         [HttpGet("Create")]
         public ActionResult Create()
         {
-            return View();
-        }
+            var airlines = _airlineRepo.GetAll();
+            var locations = _locRepo.GetAll();
 
-        // POST: Flights/Create
-        //[Authorize(Roles = "Admin")]
+            ViewBag.Airlines = new SelectList(airlines, "Airline_ID", "Airline_Name");
+            ViewBag.Locations = new SelectList(locations, "LocationID", "City");
+
+            var model = new FlightService { Flight = new Flight(), Service = new Service() };
+            return View(model);
+        }
         [HttpPost("Create")]
-        public ActionResult Create(FlightService flight)
+        [ValidateAntiForgeryToken]
+        public IActionResult Create(FlightService model)
         {
-            if (ModelState.IsValid)
+            model.Flight ??= new Flight();
+            model.Service ??= new Service();
+
+            model.Flight_Number = model.Flight.Flight_Number;
+            model.Service.ServiceType = "Flight";
+            model.Service.LocationID = model.Flight.Origin_LocationID;
+
+            ModelState.Remove(nameof(FlightService.Flight_Number));
+            ModelState.Remove("Service.ServiceType");
+            ModelState.Remove("Service.LocationID");
+
+            ModelState.Remove("Flight.Airline");
+            ModelState.Remove("Flight.OriginLocation");
+            ModelState.Remove("Flight.DestLocation");
+            ModelState.Remove("Flight.Bookings");
+
+            ModelState.Remove("Service.Location");
+            ModelState.Remove("Service.Reviews");
+            ModelState.Remove("Service.Bookings");
+
+            TryValidateModel(model.Flight, "Flight");
+            TryValidateModel(model.Service, "Service");
+
+            if (!ModelState.IsValid)
             {
-                _flightRepo.Add(flight);
+                ViewBag.Airlines = new SelectList(_airlineRepo.GetAll(), "Airline_ID", "Airline_Name", model.Flight.Airline_ID);
+                ViewBag.Locations = new SelectList(_locRepo.GetAll(), "LocationID", "City");
+                return View(model);
+            }
+
+            try
+            {
+                _flightRepo.Add(model);
+                _flightRepo.Save();
                 return RedirectToAction(nameof(Index));
             }
-            else
+            catch (Exception ex)
             {
-                return View(flight);
+                ModelState.AddModelError("", "Database Error: " + (ex.InnerException?.Message ?? ex.Message));
+                ViewBag.Airlines = new SelectList(_airlineRepo.GetAll(), "Airline_ID", "Airline_Name", model.Flight.Airline_ID);
+                ViewBag.Locations = new SelectList(_locRepo.GetAll(), "LocationID", "City");
+                return View(model);
             }
         }
 
         // GET: Flights/Edit/5
         //[Authorize(Roles = "Admin")]
         [HttpGet("Edit/{id}")]
-        public ActionResult Edit(int id)
+        public IActionResult Edit(int id)
         {
-            if (id < 0) return BadRequest();
-            var flight = _flightRepo.GetById(id);
-            if (flight == null) return NotFound();
-            return View(flight);
+            if (id <= 0) return BadRequest();
+
+            var model = _flightRepo.GetByIdWithIncludes(id);
+            if (model == null) return NotFound();
+
+            model.Flight ??= new Flight();
+            model.Service ??= new Service();
+
+            ViewBag.Airlines = new SelectList(
+                _airlineRepo.GetAll(), "Airline_ID", "Airline_Name",
+                model.Flight.Airline_ID);
+            ViewBag.Locations = new SelectList(
+                _locRepo.GetAll(), "LocationID", "City");
+
+            return View(model);
         }
 
         // POST: Flights/Edit/5
-        [HttpPost]
+        [HttpPost("Edit/{id}")]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(FlightService flight)
+        public IActionResult Edit(int id, FlightService model)
         {
-            var editFlight = _flightRepo.GetById(flight.Id);
-            if (editFlight == null) return NotFound();
-            if (ModelState.IsValid)
+            if (id != model.Id) return BadRequest();
+
+            var entity = _flightRepo.GetByIdWithIncludes(id);
+            if (entity == null) return NotFound();
+
+            entity.Flight ??= new Flight();
+            entity.Service ??= new Service();
+            ModelState.Remove("Flight.Airline");
+            ModelState.Remove("Flight.OriginLocation");
+            ModelState.Remove("Flight.DestLocation");
+            ModelState.Remove("Service.Location");
+            model.Flight_Number = model.Flight?.Flight_Number;
+            ModelState.Remove(nameof(FlightService.Flight_Number));
+            if (!ModelState.IsValid)
             {
-                _flightRepo.Update(editFlight);
-                return RedirectToAction(nameof(Index));
+                ViewBag.Airlines = new SelectList(_airlineRepo.GetAll(), "Airline_ID", "Airline_Name", model.Flight?.Airline_ID);
+                ViewBag.Locations = new SelectList(_locRepo.GetAll(), "LocationID", "City");
+                return View(model);
             }
-            else
-            {
-                return View(editFlight);
-            }
+            entity.Service.BasePrice = model.Service.BasePrice;
+            entity.Service.ServiceType = "Flight";
+            entity.Service.LocationID = model.Flight.Origin_LocationID; 
+            entity.Flight.Origin_LocationID = model.Flight.Origin_LocationID;
+            entity.Flight.Dest_LocationID = model.Flight.Dest_LocationID;
+            entity.Flight.Depart_Date = model.Flight.Depart_Date;
+            entity.Flight.Arrival_Time = model.Flight.Arrival_Time; 
+            entity.Flight.Airline_ID = model.Flight.Airline_ID;
+            entity.Flight.Available_Seats = model.Flight.Available_Seats;
+            entity.Flight.Class = model.Flight.Class;
+
+            _flightRepo.Update(entity);
+            _flightRepo.Save();
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Flights/Delete/5
@@ -98,14 +177,14 @@ namespace Ticket_booking_online_system.Controllers
         public ActionResult Delete(int id)
         {
             if (id < 0) return BadRequest();
-            var flight = _flightRepo.GetById(id);
-            if (flight == null) return NotFound();
-            return View(flight);
+            var model = _flightRepo.GetByIdWithIncludes(id);
+            if (model == null) return NotFound();
+            return View(model);
         }
 
         // POST: Flights/Delete/5
         //[Authorize(Roles = "Admin")]
-        [HttpPost]
+        [HttpPost("Delete/{id}")]
         [ValidateAntiForgeryToken]
         public ActionResult Delete(FlightService flight)
         {
@@ -113,13 +192,11 @@ namespace Ticket_booking_online_system.Controllers
             if (deletedFlight == null) return NotFound();
             if (ModelState.IsValid)
             {
-                _flightRepo.Update(deletedFlight);
+                _flightRepo.Delete(deletedFlight);
+                _flightRepo.Save();
                 return RedirectToAction(nameof(Index));
             }
-            else
-            {
-                return View(deletedFlight);
-            }
+            return View(deletedFlight);
         } 
         #endregion
     }

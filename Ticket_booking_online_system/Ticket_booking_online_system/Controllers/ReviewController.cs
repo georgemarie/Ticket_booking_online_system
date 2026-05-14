@@ -1,20 +1,29 @@
 ﻿using BLL.Repository.Interfaces;
 using DAL.Models;
-using System;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.General;
+using System;
 
 namespace Ticket_booking_online_system.Controllers
 {
-    [Route("Reviews")]
+    [Route("Review")]
     //[Authorize]
     public class ReviewController : Controller
     {
         private readonly IReviewRepository _reviewRepository;
-        public ReviewController(IReviewRepository reviewRepository)
+        private readonly IServiceRepository _serviceRepo;
+        private readonly IGenericRepository<User> _userRepository;
+
+        public ReviewController(IReviewRepository reviewRepository,
+                                IServiceRepository serviceRepo,
+                                IGenericRepository<User> userRepository)
         {
             _reviewRepository = reviewRepository;
+            _serviceRepo = serviceRepo;
+            _userRepository = userRepository;
         }
 
         // GET: Reviews
@@ -22,7 +31,7 @@ namespace Ticket_booking_online_system.Controllers
         [HttpGet("")]
         public ActionResult Index()
         {
-            var reviews = _reviewRepository.GetAll();
+            var reviews = _reviewRepository.GetAllWithIncludes();
             return View(reviews);
         }
 
@@ -32,20 +41,21 @@ namespace Ticket_booking_online_system.Controllers
         public ActionResult Details(int id)
         {
             if (id < 0) return BadRequest();
-            var review = _reviewRepository.GetById(id);
+            var review = _reviewRepository.GetByIdWithIncludes(id);
             if (review == null) return NotFound();
             return View(review);
         }
 
-        #region Admin Controller
         // GET: Reviews/Create
         //[Authorize(Roles = "Admin")]
         [HttpGet("Create")]
-        public ActionResult Create()
+        public IActionResult Create()
         {
-            return View();
-        }
+            ViewBag.Services = new SelectList(_serviceRepo.GetAll(), "ServiceID", "ServiceType");
+            ViewBag.Users = new SelectList(_userRepository.GetAll(), "UserID", "Email");
 
+            return View(new Review());
+        }
         // POST: Reviews/Create
         //[Authorize(Roles = "Admin")]
         [HttpPost("Create")]
@@ -55,22 +65,28 @@ namespace Ticket_booking_online_system.Controllers
             if (ModelState.IsValid)
             {
                 _reviewRepository.Add(review);
+                _reviewRepository.Save();
                 return RedirectToAction(nameof(Index));
             }
-            else
-            {
-                return View(review);
-            }
+            ViewBag.Services = new SelectList(_serviceRepo.GetAll(), "ServiceID", "ServiceType", review.ServiceID);
+            ViewBag.Users = new SelectList(_userRepository.GetAll(), "UserID", "Email", review.UserID);
+            return View(review);
+        
         }
 
         // GET: ReviewController/Edit/5
         //[Authorize(Roles = "Admin")]
         [HttpGet("Edit/{id}")]
-        public ActionResult Edit(int id)
+        public IActionResult Edit(int id)
         {
-            if (id < 0) return BadRequest();
-            var review = _reviewRepository.GetById(id);
+            if (id <= 0) return BadRequest();
+
+            var review = _reviewRepository.GetByIdWithIncludes(id);
             if (review == null) return NotFound();
+
+            ViewBag.Services = new SelectList(_serviceRepo.GetAll(), "ServiceID", "ServiceType", review.ServiceID);
+            ViewBag.Users = new SelectList(_userRepository.GetAll(), "UserID", "Email", review.UserID);
+
             return View(review);
         }
 
@@ -78,17 +94,20 @@ namespace Ticket_booking_online_system.Controllers
         //[Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(Review review)
+        public IActionResult Edit(int id, Review review)
         {
-            if (ModelState.IsValid)
+            if (id != review.ReviewID) return BadRequest();
+
+            if (!ModelState.IsValid)
             {
-                _reviewRepository.Update(review);
-                return RedirectToAction(nameof(Index));
-            }
-            else
-            {
+                ViewBag.Services = new SelectList(_serviceRepo.GetAll(), "ServiceID", "ServiceType", review.ServiceID);
+                ViewBag.Users = new SelectList(_userRepository.GetAll(), "UserID", "Email", review.UserID);
                 return View(review);
             }
+
+            _reviewRepository.Update(review);
+            _reviewRepository.Save();
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: ReviewController/Delete/5
@@ -97,26 +116,25 @@ namespace Ticket_booking_online_system.Controllers
         public ActionResult Delete(int id)
         {
             if (id < 0) return BadRequest();
-            var review = _reviewRepository.GetById(id);
+            var review = _reviewRepository.GetByIdWithIncludes(id);
             if (review == null) return NotFound();
             return View(review);
         }
 
         // POST: ReviewController/Delete/5
-        [HttpPost]
+        [HttpPost("Delete/{id}")]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(Review review)
+        public IActionResult DeleteConfirmed(int id)
         {
-            if (ModelState.IsValid)
-            {
-                _reviewRepository.Delete(review);
-                return RedirectToAction(nameof(Index));
-            }
-            else
-            {
-                return View();
-            }
-        } 
-        #endregion
+            if (id <= 0) return BadRequest();
+            var review = _reviewRepository.GetById(id);
+            if (review == null) return NotFound();
+
+            _reviewRepository.Delete(review);
+            _reviewRepository.Save();
+
+            return RedirectToAction(nameof(Index));
+        }
+
     }
 }
