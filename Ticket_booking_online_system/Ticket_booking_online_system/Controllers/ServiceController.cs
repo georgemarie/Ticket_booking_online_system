@@ -1,14 +1,12 @@
 ﻿using BLL.Repository.Interfaces;
 using DAL.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using RouteAttribute = Microsoft.AspNetCore.Components.RouteAttribute;
 
 namespace Ticket_booking_online_system.Controllers
 {
-    [Route("Services")]
+    [Route("Service")]
     //[Authorize]
     public class ServiceController : Controller
     {
@@ -26,8 +24,9 @@ namespace Ticket_booking_online_system.Controllers
         // GET: Services
         //[AllowAnonymous]
         [HttpGet("")]
-        public ActionResult Index()
+        public ActionResult Index(string type = "Flight")
         {
+            ViewBag.ActiveService = type;
             var services = _ServiceRepository.GetAll(); 
             return View(services);
         }
@@ -39,7 +38,8 @@ namespace Ticket_booking_online_system.Controllers
             if (!avaliableFlights.Any())
             {
                 ViewBag.Message = "No Available No Flights found.";
-                return View("Index");
+                ViewBag.ActiveService = "Flight";
+                return View("Index", _ServiceRepository.GetAll());
             }
             return View("SearchFlights", avaliableFlights);
         }
@@ -49,8 +49,9 @@ namespace Ticket_booking_online_system.Controllers
             var avaliableHotels = _HotelRepository.Search(city); 
             if (!avaliableHotels.Any())
             {
-                ViewBag.Message = "No Available No Hotels found.";
-                return View("Index");
+                ViewBag.Message = "No Hotels found in that city.";
+                ViewBag.ActiveService = "Hotel";
+                return View("Index", _ServiceRepository.GetAll());
             }
             return View("SearchHotels", avaliableHotels);
         }
@@ -103,7 +104,7 @@ namespace Ticket_booking_online_system.Controllers
 
         // POST: Services/Edit/5
         //[Authorize(Roles = "Admin")]
-        [HttpPost]
+        [HttpPost("Edit/{id}")]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(Service service)
         {
@@ -132,7 +133,7 @@ namespace Ticket_booking_online_system.Controllers
         }
         // POST: Services/Delete/5
         //[Authorize(Roles = "Admin")]
-        [HttpPost]
+        [HttpPost("Delete/{id}")]
         [ValidateAntiForgeryToken]
         public ActionResult Delete(Service service)
         {
