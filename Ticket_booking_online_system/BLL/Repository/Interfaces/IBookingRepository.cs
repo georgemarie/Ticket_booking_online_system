@@ -8,6 +8,7 @@ namespace BLL.Repository.Interfaces
     public interface IBookingRepository : IGenericRepository<Booking>
     {
         IEnumerable<Booking> GetUserBookings(int userId);
+        new IEnumerable<Booking> GetAll();
 
         Booking GetBookingWithDetails(int bookingId);
 

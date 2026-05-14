@@ -75,7 +75,7 @@ namespace Ticket_booking_online_system.Controllers
         }
 
         // POST: Flights/Edit/5
-        [HttpPost]
+        [HttpPost("Edit/{id}")]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(FlightService flight)
         {
@@ -105,7 +105,7 @@ namespace Ticket_booking_online_system.Controllers
 
         // POST: Flights/Delete/5
         //[Authorize(Roles = "Admin")]
-        [HttpPost]
+        [HttpPost("Delete/{id}")]
         [ValidateAntiForgeryToken]
         public ActionResult Delete(FlightService flight)
         {

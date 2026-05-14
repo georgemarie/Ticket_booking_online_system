@@ -4,9 +4,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Ticket_booking_online_system.Data
 {
-    public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext(options)
+    public class ApplicationDbContext : IdentityDbContext
     {
-    
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+            : base(options)
+        {
+        }
+
         public virtual DbSet<Location> Locations { get; set; }
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<Review> Reviews { get; set; }
@@ -23,13 +27,6 @@ namespace Ticket_booking_online_system.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
-            //modelBuilder.Entity<Service>()
-            //    .UseTphMappingStrategy()
-            //    .HasDiscriminator<string>("ServiceType")
-            //    .HasValue<FlightService>("Flight")
-            //    .HasValue<HotelService>("Hotel")
-            //    .HasValue<TransportationService>("Transportation");
 
             modelBuilder.Entity<Flight>()
                 .HasOne(f => f.OriginLocation)
