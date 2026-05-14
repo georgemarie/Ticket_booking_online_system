@@ -6,6 +6,14 @@ using System.Text;
 
 namespace DAL.Models
 {
+    public enum PaymentMethod
+    {
+        CreditCard,
+        DebitCard,
+        PayPal,
+        BankTransfer,
+        Cash
+    }
     public class Payment
     {
         [Key]
@@ -17,7 +25,7 @@ namespace DAL.Models
         public decimal Amount { get; set; }
 
         [Required(ErrorMessage = "Payment Method is required.")]
-        [StringLength(50, ErrorMessage = "Payment Method cannot exceed 50 characters.")]
+        [EnumDataType(typeof(PaymentMethod))]
         public string Method { get; set; }
 
         [Required(ErrorMessage = "Payment Date is required.")]
