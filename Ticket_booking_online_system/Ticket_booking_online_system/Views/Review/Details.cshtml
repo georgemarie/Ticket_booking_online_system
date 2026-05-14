@@ -1,42 +1,31 @@
 ﻿@model DAL.Models.Review
 
-@{
-    ViewData["Title"] = "Details";
-}
+<div class="card mt-4">
+    <div class="card-header bg-dark text-white">
+        <h3>Review Details</h3>
+    </div>
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-sm-3">Service</dt>
+            <dd class="col-sm-9">@Model.Service?.ServiceType</dd>
 
-<h1>Details</h1>
+            <dt class="col-sm-3">User</dt>
+            <dd class="col-sm-9">@Model.User?.Email</dd>
 
-<div>
-    <h4>Review</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Comment)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Comment)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Rating)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Rating)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Service)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Service.ServiceType)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.User)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.User.Email)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.ReviewID">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+            <dt class="col-sm-3">Rating</dt>
+            <dd class="col-sm-9">
+                @for (int i = 0; i < Model.Rating; i++)
+                {
+                    <span class="text-warning">★</span>
+                }
+            </dd>
+
+            <dt class="col-sm-3">Comment</dt>
+            <dd class="col-sm-9">@Model.Comment</dd>
+        </dl>
+    </div>
+    <div class="card-footer">
+        <a asp-action="Edit" asp-route-id="@Model.ReviewID" class="btn btn-primary">Edit</a>
+        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+    </div>
 </div>

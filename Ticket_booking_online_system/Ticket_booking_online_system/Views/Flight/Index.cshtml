@@ -29,8 +29,8 @@
                 <td>@item.Flight?.Flight_Number</td>
                 <td>@item.Flight?.OriginLocation?.City</td>
                 <td>@item.Flight?.DestLocation?.City</td>
-                <td>@item.Flight?.Depart_Date.ToShortDateString()</td>
-                @* <td>@item.Flight?.Arrival_Time.ToShortTimeString()</td> *@
+                <td>@(item.Flight?.Depart_Date.ToString("yyyy-MM-dd") ?? "N/A")</td>
+                <td>@(item.Flight?.Arrival_Time?.ToString("yyyy-MM-dd HH:mm") ?? "N/A")</td>
                 <td>@item.Flight?.Class</td>
                 <td>@item.Flight?.Available_Seats</td>
                 <td>@item.Flight?.Airline?.Airline_Name</td>

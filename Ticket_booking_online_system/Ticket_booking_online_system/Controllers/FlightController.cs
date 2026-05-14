@@ -51,53 +51,14 @@ namespace Ticket_booking_online_system.Controllers
         public ActionResult Create()
         {
             var airlines = _airlineRepo.GetAll();
-            // NEW: Load real locations from your repository
-            // Replace '_locationRepo' with whatever your Location repository is named
             var locations = _locRepo.GetAll();
 
             ViewBag.Airlines = new SelectList(airlines, "Airline_ID", "Airline_Name");
-            ViewBag.Locations = new SelectList(locations, "LocationID", "City"); // ID and City name
+            ViewBag.Locations = new SelectList(locations, "LocationID", "City");
 
             var model = new FlightService { Flight = new Flight(), Service = new Service() };
             return View(model);
         }
-
-        // POST: Flights/Create
-        //[Authorize(Roles = "Admin")]
-        //[HttpPost("Create")]
-        //public ActionResult Create(FlightService flight)
-        //{
-        //    if (flight.Flight == null)
-        //    {
-        //        flight.Flight = new Flight
-        //        {
-        //            Flight_Number = flight.Flight_Number,
-        //            // These won't be set here — they come from the form via Flight.xxx binding
-        //            // So instead, just ensure the binder works by checking below
-        //        };
-        //    }
-
-        //    Console.WriteLine($"After fix — Flight null: {flight.Flight == null}");
-        //    Console.WriteLine($"Flight_Number: {flight.Flight?.Flight_Number}");
-
-        //    ModelState.Remove("Flight");
-        //    ModelState.Remove("Service");
-        //    ModelState.Remove("Flight.Airline");
-        //    ModelState.Remove("Flight.Airline_ID");
-        //    ModelState.Remove("Flight.OriginLocation");
-        //    ModelState.Remove("Flight.DestLocation");
-        //    ModelState.Remove("Service.Location");
-
-        //    if (ModelState.IsValid)
-        //    {
-        //        _flightRepo.Add(flight);   // saves Service + Flight inside
-        //        _flightRepo.Save();        // saves FlightService
-        //        return RedirectToAction(nameof(Index));
-        //    }
-
-        //    ViewBag.Airlines = new SelectList(_airlineRepo.GetAll(), "Airline_ID", "Airline_Name");
-        //    return View(flight);
-        //}
         [HttpPost("Create")]
         [ValidateAntiForgeryToken]
         public IActionResult Create(FlightService model)
@@ -105,17 +66,14 @@ namespace Ticket_booking_online_system.Controllers
             model.Flight ??= new Flight();
             model.Service ??= new Service();
 
-            // ✅ assign derived fields BEFORE validation
             model.Flight_Number = model.Flight.Flight_Number;
             model.Service.ServiceType = "Flight";
             model.Service.LocationID = model.Flight.Origin_LocationID;
 
-            // ✅ clear ModelState for fields we set manually
             ModelState.Remove(nameof(FlightService.Flight_Number));
             ModelState.Remove("Service.ServiceType");
             ModelState.Remove("Service.LocationID");
 
-            // ✅ remove validation for navigation props we don't bind
             ModelState.Remove("Flight.Airline");
             ModelState.Remove("Flight.OriginLocation");
             ModelState.Remove("Flight.DestLocation");
@@ -125,7 +83,6 @@ namespace Ticket_booking_online_system.Controllers
             ModelState.Remove("Service.Reviews");
             ModelState.Remove("Service.Bookings");
 
-            // ✅ validate nested objects (since you used ValidateNever earlier)
             TryValidateModel(model.Flight, "Flight");
             TryValidateModel(model.Service, "Service");
 
@@ -154,30 +111,64 @@ namespace Ticket_booking_online_system.Controllers
         // GET: Flights/Edit/5
         //[Authorize(Roles = "Admin")]
         [HttpGet("Edit/{id}")]
-        public ActionResult Edit(int id)
+        public IActionResult Edit(int id)
         {
-            if (id < 0) return BadRequest();
-            var flight = _flightRepo.GetById(id);
-            if (flight == null) return NotFound();
-            return View(flight);
+            if (id <= 0) return BadRequest();
+
+            var model = _flightRepo.GetByIdWithIncludes(id);
+            if (model == null) return NotFound();
+
+            model.Flight ??= new Flight();
+            model.Service ??= new Service();
+
+            ViewBag.Airlines = new SelectList(
+                _airlineRepo.GetAll(), "Airline_ID", "Airline_Name",
+                model.Flight.Airline_ID);
+            ViewBag.Locations = new SelectList(
+                _locRepo.GetAll(), "LocationID", "City");
+
+            return View(model);
         }
 
         // POST: Flights/Edit/5
         [HttpPost("Edit/{id}")]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(FlightService flight)
+        public IActionResult Edit(int id, FlightService model)
         {
-            var editFlight = _flightRepo.GetById(flight.Id);
-            if (editFlight == null) return NotFound();
-            if (ModelState.IsValid)
+            if (id != model.Id) return BadRequest();
+
+            var entity = _flightRepo.GetByIdWithIncludes(id);
+            if (entity == null) return NotFound();
+
+            entity.Flight ??= new Flight();
+            entity.Service ??= new Service();
+            ModelState.Remove("Flight.Airline");
+            ModelState.Remove("Flight.OriginLocation");
+            ModelState.Remove("Flight.DestLocation");
+            ModelState.Remove("Service.Location");
+            model.Flight_Number = model.Flight?.Flight_Number;
+            ModelState.Remove(nameof(FlightService.Flight_Number));
+            if (!ModelState.IsValid)
             {
-                _flightRepo.Update(editFlight);
-                return RedirectToAction(nameof(Index));
+                ViewBag.Airlines = new SelectList(_airlineRepo.GetAll(), "Airline_ID", "Airline_Name", model.Flight?.Airline_ID);
+                ViewBag.Locations = new SelectList(_locRepo.GetAll(), "LocationID", "City");
+                return View(model);
             }
-            else
-            {
-                return View(editFlight);
-            }
+            entity.Service.BasePrice = model.Service.BasePrice;
+            entity.Service.ServiceType = "Flight";
+            entity.Service.LocationID = model.Flight.Origin_LocationID; 
+            entity.Flight.Origin_LocationID = model.Flight.Origin_LocationID;
+            entity.Flight.Dest_LocationID = model.Flight.Dest_LocationID;
+            entity.Flight.Depart_Date = model.Flight.Depart_Date;
+            entity.Flight.Arrival_Time = model.Flight.Arrival_Time; 
+            entity.Flight.Airline_ID = model.Flight.Airline_ID;
+            entity.Flight.Available_Seats = model.Flight.Available_Seats;
+            entity.Flight.Class = model.Flight.Class;
+
+            _flightRepo.Update(entity);
+            _flightRepo.Save();
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Flights/Delete/5
@@ -186,9 +177,9 @@ namespace Ticket_booking_online_system.Controllers
         public ActionResult Delete(int id)
         {
             if (id < 0) return BadRequest();
-            var flight = _flightRepo.GetById(id);
-            if (flight == null) return NotFound();
-            return View(flight);
+            var model = _flightRepo.GetByIdWithIncludes(id);
+            if (model == null) return NotFound();
+            return View(model);
         }
 
         // POST: Flights/Delete/5
@@ -201,13 +192,11 @@ namespace Ticket_booking_online_system.Controllers
             if (deletedFlight == null) return NotFound();
             if (ModelState.IsValid)
             {
-                _flightRepo.Update(deletedFlight);
+                _flightRepo.Delete(deletedFlight);
+                _flightRepo.Save();
                 return RedirectToAction(nameof(Index));
             }
-            else
-            {
-                return View(deletedFlight);
-            }
+            return View(deletedFlight);
         } 
         #endregion
     }

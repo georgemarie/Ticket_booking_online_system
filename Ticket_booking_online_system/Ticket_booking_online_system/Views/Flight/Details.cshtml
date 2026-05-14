@@ -1,4 +1,4 @@
-﻿@* @model DAL.Models.FlightService
+﻿@model DAL.Models.FlightService
 @{
     ViewData["Title"] = "Flight Details";
 }
@@ -17,10 +17,18 @@
     <dd class="col-sm-9">@Model.Flight?.DestLocation?.City</dd>
 
     <dt class="col-sm-3">Departure Date</dt>
-    <dd class="col-sm-9">@Model.Flight?.Depart_Date.ToShortDateString()</dd>
+    <dd class="col-sm-9">
+        @* Use ToString with a format string directly on the nullable *@
+        @(Model.Flight?.Depart_Date.ToString("yyyy-MM-dd") ?? "N/A")
+    </dd>
+    @* <dd class="col-sm-9">@Model.Flight?.Depart_Date.ToShortDateString()</dd> *@
 
     <dt class="col-sm-3">Arrival Time</dt>
-    <dd class="col-sm-9">@Model.Flight?.Arrival_Time.ToString("hh:mm tt")</dd>
+    <dt class="col-sm-3">Arrival Time</dt>
+    <dd class="col-sm-9">
+        @* This handles the 1-argument error for nullable DateTime *@
+        @(Model.Flight?.Arrival_Time?.ToString("hh:mm tt") ?? "N/A")
+    </dd>
 
     <dt class="col-sm-3">Class</dt>
     <dd class="col-sm-9">@Model.Flight?.Class</dd>
@@ -36,4 +44,4 @@
 </dl>
 
 <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Edit</a>
-<a asp-action="Index" class="btn btn-secondary">Back to List</a> *@
+<a asp-action="Index" class="btn btn-secondary">Back to List</a>
