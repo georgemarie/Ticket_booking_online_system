@@ -95,6 +95,7 @@ namespace Ticket_booking_online_system.Controllers
         #endregion
 
         #region Edit booking 
+        #region Editing
         [HttpGet("Edit/{id:int}")]
         public IActionResult Edit(int id)
         {
@@ -102,20 +103,23 @@ namespace Ticket_booking_online_system.Controllers
 
             if (booking == null)
                 return NotFound();
+
             ViewBag.UserID = new SelectList(_userRepository.GetAll(), "UserID", "Name", booking.UserID);
+
             ViewBag.ServiceID = new SelectList(_serviceRepository.GetAll(), "ServiceID", "ServiceType", booking.ServiceID);
 
             return View(booking);
         }
-
-        [HttpPost("Edit")]
+        [HttpPost("Edit/{id:int}")]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(Booking model)
+        public IActionResult Edit(int id, Booking model)
         {
             if (!ModelState.IsValid)
             {
                 ViewBag.UserID = new SelectList(_userRepository.GetAll(), "UserID", "Name", model.UserID);
+
                 ViewBag.ServiceID = new SelectList(_serviceRepository.GetAll(), "ServiceID", "ServiceType", model.ServiceID);
+
                 return View(model);
             }
 
@@ -123,7 +127,6 @@ namespace Ticket_booking_online_system.Controllers
 
             if (booking == null)
                 return NotFound();
-
 
             booking.Date = model.Date;
             booking.ServiceID = model.ServiceID;
@@ -133,6 +136,7 @@ namespace Ticket_booking_online_system.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+        #endregion
         #endregion
         #region Cancel Booking
         // POST: /Booking/Cancel/5

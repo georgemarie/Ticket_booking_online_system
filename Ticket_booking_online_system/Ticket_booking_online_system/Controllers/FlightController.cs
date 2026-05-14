@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Ticket_booking_online_system.Controllers
 {
-    [Route("Flights")]
+    [Route("Flight")]
     //[Authorize]
     public class FlightController : Controller
     {

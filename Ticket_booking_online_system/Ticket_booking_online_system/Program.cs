@@ -25,6 +25,7 @@ namespace Ticket_booking_online_system
             builder.Services.AddScoped<IBookingRepository, BookingRepository>();
             builder.Services.AddScoped<IHotelRepository, HotelRepository>();
             builder.Services.AddScoped<IFlightServiceRepository, FlightServiceRepository>();
+            builder.Services.AddScoped<ILocationRepository, LocationRepository>();
             builder.Services.AddScoped<
     IServiceRepository,
     ServiceRepository>();
@@ -50,7 +51,7 @@ namespace Ticket_booking_online_system
             app.MapStaticAssets();
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=User}/{action=Index}/{id?}")
+                pattern: "{controller=Home}/{action=Index}/{id?}")
                 .WithStaticAssets();
             app.MapRazorPages()
                .WithStaticAssets();

@@ -1,23 +1,36 @@
-﻿<h2>Choose Service Type</h2>
 
-<div style="display:flex; gap:20px;">
+﻿@{
+    ViewData["Title"] = "Welcome to Booking System";
+}
 
-    <a asp-controller="Flight"
-       asp-action="Index"
-       style="padding:20px; border:1px solid black;">
-        ✈️ Flights
-    </a>
+<div class="container text-center mt-5">
+    <h1 class="display-4 mb-4">What are you looking for today?</h1>
+    <p class="lead mb-5">Select a service to start your booking process.</p>
 
-    <a asp-controller="Hotel"
-       asp-action="Search"
-       style="padding:20px; border:1px solid black;">
-        🏨 Hotels
-    </a>
+    <div class="row justify-content-center">
+        <!-- Flight Service Card -->
+        <div class="col-md-5 mb-4">
+            <div class="card shadow-lg h-100 border-primary">
+                <div class="card-body d-flex flex-column">
+                    <h2 class="card-title text-primary">✈️ Flights</h2>
+                    <p class="card-text text-muted">Find the best deals on international and domestic flights.</p>
+                    <a asp-controller="Service" asp-action="Index" asp-route-type="Flight"
+                       class="btn btn-primary btn-lg mt-auto">Go to Flight Services</a>
+                </div>
+            </div>
+        </div>
 
-    <a asp-controller="Transport"
-       asp-action="Search"
-       style="padding:20px; border:1px solid black;">
-        🚕 Transport
-    </a>
-
+        <!-- Hotel Service Card -->
+        <div class="col-md-5 mb-4">
+            <div class="card shadow-lg h-100 border-info">
+                <div class="card-body d-flex flex-column">
+                    <h2 class="card-title text-info">🏨 Hotels</h2>
+                    <p class="card-text text-muted">Book luxury hotels or cozy stays at the lowest prices.</p>
+                    <a asp-controller="Service" asp-action="Index" asp-route-type="Hotel"
+                       class="btn btn-info text-white btn-lg mt-auto">Go to Hotel Services</a>
+                </div>
+            </div>
+        </div>
+    </div>
+>>>>>>> fe977195520306b182ff358f9330b93a9ac45ee6
 </div>

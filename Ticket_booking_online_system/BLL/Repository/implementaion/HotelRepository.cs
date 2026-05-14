@@ -29,6 +29,7 @@ namespace BLL.Repository.implementaion
         {
             return _context.HotelServices
                 .Include(h => h.Service)
+                .ThenInclude(s => s.Location)
                 .Where(h => h.Service.Location.City.Contains(city))
                 .ToList();
         }
