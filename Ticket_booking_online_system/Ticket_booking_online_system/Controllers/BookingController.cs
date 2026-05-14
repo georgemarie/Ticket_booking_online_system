@@ -25,7 +25,7 @@ namespace Ticket_booking_online_system.Controllers
             _serviceRepository = serviceRepository;
         }
         #region Get All 
-       // [Authorization(Roles = "Admin")]
+        // [Authorization(Roles = "Admin")]
 
         #region ALL BOOKINGS
         [HttpGet("")]
@@ -107,10 +107,10 @@ namespace Ticket_booking_online_system.Controllers
 
             return View(booking);
         }
-     
+
         [HttpPost("Edit")]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit( Booking model)
+        public IActionResult Edit(Booking model)
         {
             if (!ModelState.IsValid)
             {
@@ -124,7 +124,7 @@ namespace Ticket_booking_online_system.Controllers
             if (booking == null)
                 return NotFound();
 
-            
+
             booking.Date = model.Date;
             booking.ServiceID = model.ServiceID;
 

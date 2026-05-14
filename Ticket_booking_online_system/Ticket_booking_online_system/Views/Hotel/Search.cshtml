@@ -1,0 +1,45 @@
+﻿@model IEnumerable<DAL.Models.HotelService>
+@{
+    ViewData["Title"] = "Hotels";
+}
+
+<h1>Available Hotels</h1>
+
+<form asp-action="Results" method="get" class="mb-3">
+    <div class="input-group">
+        <input type="text" name="city" class="form-control" placeholder="Search by city..." />
+        <button type="submit" class="btn btn-primary">Search</button>
+    </div>
+</form>
+
+<p>
+    <a asp-action="Create" class="btn btn-success">Add New Hotel</a>
+</p>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Hotel Name</th>
+            <th>Room Type</th>
+            <th>Check In</th>
+            <th>Check Out</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Hotel_Name</td>
+                <td>@item.Room_Type</td>
+                <td>@item.Check_In?.ToShortDateString()</td>
+                <td>@item.Check_Out?.ToShortDateString()</td>
+                <td>
+                    <a asp-action="Details" asp-route-serviceId="@item.ServiceId" class="btn btn-sm btn-info">Details</a>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

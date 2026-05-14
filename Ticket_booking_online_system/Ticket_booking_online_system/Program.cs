@@ -22,8 +22,10 @@ namespace Ticket_booking_online_system
             builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             builder.Services.AddScoped<IBookingService, BookingService>();
             builder.Services.AddScoped<IFlightRepository, FlightRepository>();
+            builder.Services.AddScoped<IAirlineRepository, AirlineRepository>();
             builder.Services.AddScoped<IBookingRepository, BookingRepository>();
             builder.Services.AddScoped<IHotelRepository, HotelRepository>();
+            builder.Services.AddScoped<ILocationRepository, LocationRepository>();
             builder.Services.AddScoped<IFlightServiceRepository, FlightServiceRepository>();
             builder.Services.AddScoped<
     IServiceRepository,

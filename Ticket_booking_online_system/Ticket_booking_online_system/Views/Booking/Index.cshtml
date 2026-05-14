@@ -1,0 +1,44 @@
+﻿@model IEnumerable<DAL.Models.Booking>
+@{
+    ViewData["Title"] = "All Bookings";
+}
+
+<h1>All Bookings</h1>
+<p>
+    <a asp-action="Create" class="btn btn-primary">Create New</a>
+</p>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Status</th>
+            <th>User</th>
+            <th>Service</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Date.ToShortDateString()</td>
+                <td>@item.Status</td>
+                <td>@item.User?.Email</td>
+                <td>@item.Service?.ServiceType</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.BookingID" class="btn btn-sm btn-info">Details</a>
+                    <a asp-action="Edit" asp-route-id="@item.BookingID" class="btn btn-sm btn-warning">Edit</a>
+                    <a asp-action="UserBookings" asp-route-userId="@item.User?.UserID" class="btn btn-sm btn-secondary">User Bookings</a> 
+
+                    <form asp-action="Cancel" asp-route-id="@item.BookingID" method="post" style="display:inline">
+                        <button type="submit" class="btn btn-sm btn-danger"
+                                onclick="return confirm('Cancel this booking?')">
+                            Cancel
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

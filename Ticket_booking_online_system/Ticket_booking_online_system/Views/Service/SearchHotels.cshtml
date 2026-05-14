@@ -1,0 +1,69 @@
+﻿@model IEnumerable<DAL.Models.HotelService>
+
+@{
+    ViewData["Title"] = "Hotel Search Results";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Hotels in Selected City</h2>
+        <a asp-action="Index" class="btn btn-secondary">Back to Search</a>
+    </div>
+
+    <table class="table table-hover table-bordered shadow-sm">
+        <thead class="thead-dark bg-dark text-white">
+            <tr>
+                <th>Hotel Name</th>
+                <th>Room Type</th>
+                <th>City</th>
+                <th>Check-In</th>
+                <th>Check-Out</th>
+                <th>Price per Night</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            <strong>@item.Hotel_Name</strong>
+                        </td>
+                        <td>
+                            @item.Room_Type
+                        </td>
+                        <td>
+                            @* Using the null-conditional operator for safety *@
+                            @(item.Service?.Location?.City ?? "N/A")
+                        </td>
+                        <td>
+                            @* Using ToString("d") is much safer for Nullable DateTime *@
+                            @(item.Check_In?.ToString("yyyy-MM-dd") ?? "N/A")
+                        </td>
+                        <td>
+                            @(item.Check_Out?.ToString("yyyy-MM-dd") ?? "N/A")
+                        </td>
+                        <td>
+                            <span class="text-success fw-bold">
+                                @(item.Service?.BasePrice.ToString("C") ?? "0.00")
+                            </span>
+                        </td>
+                        <td>
+                            <a asp-action="Details" asp-controller="Hotel" asp-route-id="@item.ServiceId" class="btn btn-sm btn-primary">
+                                Book Room
+                            </a>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="7" class="text-center">No hotels found for the selected criteria.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

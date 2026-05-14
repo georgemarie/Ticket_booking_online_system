@@ -1,0 +1,39 @@
+﻿@* @model DAL.Models.FlightService
+@{
+    ViewData["Title"] = "Flight Details";
+}
+
+<h1>Flight Details</h1>
+<hr />
+
+<dl class="row">
+    <dt class="col-sm-3">Flight Number</dt>
+    <dd class="col-sm-9">@Model.Flight?.Flight_Number</dd>
+
+    <dt class="col-sm-3">Origin</dt>
+    <dd class="col-sm-9">@Model.Flight?.OriginLocation?.City</dd>
+
+    <dt class="col-sm-3">Destination</dt>
+    <dd class="col-sm-9">@Model.Flight?.DestLocation?.City</dd>
+
+    <dt class="col-sm-3">Departure Date</dt>
+    <dd class="col-sm-9">@Model.Flight?.Depart_Date.ToShortDateString()</dd>
+
+    <dt class="col-sm-3">Arrival Time</dt>
+    <dd class="col-sm-9">@Model.Flight?.Arrival_Time.ToString("hh:mm tt")</dd>
+
+    <dt class="col-sm-3">Class</dt>
+    <dd class="col-sm-9">@Model.Flight?.Class</dd>
+
+    <dt class="col-sm-3">Available Seats</dt>
+    <dd class="col-sm-9">@Model.Flight?.Available_Seats</dd>
+
+    <dt class="col-sm-3">Airline</dt>
+    <dd class="col-sm-9">@Model.Flight?.Airline?.Airline_Name</dd>
+
+    <dt class="col-sm-3">Service</dt>
+    <dd class="col-sm-9">@Model.Service?.ServiceType</dd>
+</dl>
+
+<a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Edit</a>
+<a asp-action="Index" class="btn btn-secondary">Back to List</a> *@

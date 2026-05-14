@@ -1,0 +1,27 @@
+﻿@model DAL.Models.HotelService
+@{
+    ViewData["Title"] = "Hotel Details";
+}
+
+<h1>Hotel Details</h1>
+<hr />
+
+<dl class="row">
+    <dt class="col-sm-3">Hotel Name</dt>
+    <dd class="col-sm-9">@Model.Hotel_Name</dd>
+
+    <dt class="col-sm-3">Room Type</dt>
+    <dd class="col-sm-9">@Model.Room_Type</dd>
+
+    <dt class="col-sm-3">Check In</dt>
+    <dd class="col-sm-9">@Model.Check_In?.ToShortDateString()</dd>
+
+    <dt class="col-sm-3">Check Out</dt>
+    <dd class="col-sm-9">@Model.Check_Out?.ToShortDateString()</dd>
+
+    <dt class="col-sm-3">Service</dt>
+    <dd class="col-sm-9">@Model.Service?.ServiceType</dd>
+</dl>
+
+<a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Edit</a>
+<a asp-action="Search" class="btn btn-secondary">Back to List</a>
