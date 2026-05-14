@@ -22,8 +22,14 @@ namespace BLL.Repository.implementaion
                 .Where(b => b.UserID == userId)
                 .ToList();
         }
+        public new IEnumerable<Booking> GetAll()
+        {
+            return _context.Bookings
+                .Include(b => b.User)
+                .Include(b => b.Service)
+                .ToList();
+        }
 
-       
         public Booking GetBookingWithDetails(int bookingId)
         {
             return _context.Bookings

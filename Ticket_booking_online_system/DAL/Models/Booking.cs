@@ -20,13 +20,12 @@ namespace DAL.Models
         public DateTime Date { get; set; }
 
         [Required(ErrorMessage = "Status is required.")]
-        [StringLength(50, ErrorMessage = "Status cannot exceed 50 characters.")]
         public BookingStatus Status { get; set; }
 
         [ForeignKey("User")]
         [Required(ErrorMessage = "User is required.")]
         public int UserID { get; set; }
-        public User User { get; set; }
+        public User?User { get; set; }
 
         [ForeignKey("Service")]
         public int ServiceID { get; set; }
@@ -36,7 +35,7 @@ namespace DAL.Models
         //public string Flight_Number { get; set; }
         //public Flight Flight { get; set; }
 
-        public Payment Payment { get; set; }
-        public RefundCancel RefundCancel { get; set; }
+        public Payment? Payment { get; set; }
+        public RefundCancel? RefundCancel { get; set; }
     }
 }
