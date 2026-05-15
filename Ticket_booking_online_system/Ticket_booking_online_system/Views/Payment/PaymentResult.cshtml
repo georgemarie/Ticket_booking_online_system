@@ -1,0 +1,35 @@
+﻿@using DAL.Models
+>
+
+@model DAL.Models.Booking
+
+@{
+    ViewData["Title"] = "Payment Result";
+}
+
+<div style="text-align:center; margin-top:50px;">
+
+    @if (Model.Status == BookingStatus.Confirmed)
+    {
+        <h2 style="color:green;">✅ Payment Successful</h2>
+        <p>Your booking has been confirmed.</p>
+    }
+    else if (Model.Status == BookingStatus.Cancelled)
+    {
+        <h2 style="color:red;">❌ Payment Cancelled</h2>
+        <p>Your booking was not completed.</p>
+    }
+    else
+    {
+        <h2>⏳ Pending</h2>
+        <p>Your booking is still pending.</p>
+    }
+
+    <hr />
+
+    <p><strong>Booking ID:</strong> @Model.BookingID</p>
+    <p><strong>Service:</strong> @Model.Service?.ServiceType</p>
+    <p><strong>Date:</strong> @Model.Date</p>
+
+    <a href="/Booking/Index">Go Back</a>
+</div>

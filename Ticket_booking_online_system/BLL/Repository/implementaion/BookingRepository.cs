@@ -49,7 +49,5 @@ namespace BLL.Repository.implementaion
                 _context.Bookings.Update(booking);
             }
         }
-
-        
     }
 }
