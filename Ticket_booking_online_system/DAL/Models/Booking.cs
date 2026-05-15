@@ -22,10 +22,11 @@ namespace DAL.Models
         [Required(ErrorMessage = "Status is required.")]
         public BookingStatus Status { get; set; }
 
+        
         [ForeignKey("User")]
-        [Required(ErrorMessage = "User is required.")]
-        public int UserID { get; set; }
-        public User?User { get; set; }
+        public string UserID { get; set; }
+
+        public ApplicationUser User { get; set; }
 
         [ForeignKey("Service")]
         public int ServiceID { get; set; }

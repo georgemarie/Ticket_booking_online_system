@@ -23,9 +23,10 @@ namespace DAL.Models
         public int ServiceID { get; set; }
         public Service Service { get; set; }
 
+        
         [ForeignKey("User")]
-        [Required(ErrorMessage = "User is required.")]
-        public int UserID { get; set; }
-        public User User { get; set; }
+        public string UserID { get; set; }
+
+        public ApplicationUser User { get; set; }
     }
 }
