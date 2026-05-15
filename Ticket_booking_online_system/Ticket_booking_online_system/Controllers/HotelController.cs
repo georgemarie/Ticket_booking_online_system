@@ -63,7 +63,7 @@ namespace Ticket_booking_online_system.Controllers
         //[Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
-            var services = _serviceRepo.GetAll().ToList();
+            var services = _serviceRepo.GetAll().Distinct().ToList();
 
             ViewBag.ServiceId = new SelectList(services, "ServiceID", "ServiceType");
 
@@ -80,7 +80,7 @@ namespace Ticket_booking_online_system.Controllers
 
             if (!ModelState.IsValid)
             {
-                ViewBag.ServiceId = new SelectList(_serviceRepo.GetAll(), "Id", "ServiceType", model.ServiceId);
+                ViewBag.ServiceId = new SelectList(_serviceRepo.GetAll().Distinct(), "Id", "ServiceType", model.ServiceId);
                 ViewBag.LocationID = new SelectList(_locationRepo.GetAll(), "LocationID", "City");
                 return View(model);
             }

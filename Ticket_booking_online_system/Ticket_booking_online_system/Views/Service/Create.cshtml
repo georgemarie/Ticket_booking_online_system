@@ -12,21 +12,33 @@
     <div class="col-md-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
+    
+            <div class="form-group mb-3">
                 <label asp-for="BasePrice" class="control-label"></label>
                 <input asp-for="BasePrice" class="form-control" />
                 <span asp-validation-for="BasePrice" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="ServiceType" class="control-label"></label>
-                <input asp-for="ServiceType" class="form-control" />
+
+            <div class="form-group mb-3">
+                <label asp-for="ServiceType" class="control-label">Service Type</label>
+                <select asp-for="ServiceType" class="form-control" required>
+                    <option value="">-- Select Service Type --</option>
+                    <option value="Flight">Flight</option>
+                    <option value="Hotel">Hotel</option>
+                    <option value="Transportation">Transportation</option>
+                </select>
                 <span asp-validation-for="ServiceType" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="LocationID" class="control-label"></label>
-                <select asp-for="LocationID" class ="form-control" asp-items="ViewBag.LocationID"></select>
+
+            <div class="form-group mb-3">
+                <label asp-for="LocationID" class="control-label">City</label>
+                <select asp-for="LocationID" class="form-control" asp-items="ViewBag.LocationID" required>
+                    <option value="">-- Select City --</option>
+                </select>
+                <span asp-validation-for="LocationID" class="text-danger"></span>
             </div>
-            <div class="form-group">
+
+            <div class="form-group mt-4">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </form>

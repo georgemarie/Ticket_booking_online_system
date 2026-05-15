@@ -3,6 +3,7 @@ using DAL.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Ticket_booking_online_system.Controllers
 {
@@ -13,12 +14,14 @@ namespace Ticket_booking_online_system.Controllers
         private IServiceRepository _ServiceRepository { get; }
         private IFlightServiceRepository _FlightService { get; }
         private IHotelRepository _HotelRepository { get; }
+        private ILocationRepository _LocationRepository { get; }
 
-        public ServiceController(IServiceRepository serviceRepository, IFlightServiceRepository flightService, IHotelRepository hotelRepository)
+        public ServiceController(IServiceRepository serviceRepository, IFlightServiceRepository flightService, IHotelRepository hotelRepository, ILocationRepository locationRepository)
         {
             _ServiceRepository = serviceRepository;
             _FlightService = flightService;
             _HotelRepository = hotelRepository;
+            _LocationRepository = locationRepository;
         }
 
         // GET: Services
@@ -27,7 +30,16 @@ namespace Ticket_booking_online_system.Controllers
         public ActionResult Index(string type = "Flight")
         {
             ViewBag.ActiveService = type;
-            var services = _ServiceRepository.GetAll(); 
+            var services = _ServiceRepository.GetAll();
+
+            var allCities = _LocationRepository.GetAll()
+            .Where(loc => !string.IsNullOrEmpty(loc.City))
+            .Select(loc => loc.City)
+            .Distinct()
+            .ToList();
+
+            ViewBag.availableCities = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(allCities);
+
             return View(services);
         }
 
@@ -71,6 +83,8 @@ namespace Ticket_booking_online_system.Controllers
         [HttpGet("Create")]
         public ActionResult Create()
         {
+            var locations = _LocationRepository.GetAll();
+            ViewBag.LocationID = new SelectList(locations, "LocationID", "City");
             return View();
         }
 
@@ -85,10 +99,10 @@ namespace Ticket_booking_online_system.Controllers
                 _ServiceRepository.Add(service);
                 return RedirectToAction(nameof(Index));
             }
-            else
-            {
-                return View(service);
-            }
+            var locations = _LocationRepository.GetAll();
+            ViewBag.LocationID = new SelectList(locations, "LocationID", "City", service.LocationID);
+            return View(service);
+
         }
 
         // GET: Services/Edit/5
