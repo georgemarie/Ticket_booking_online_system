@@ -5,10 +5,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Stripe.Checkout;
 using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using static System.Collections.Specialized.BitVector32;
 
 namespace Ticket_booking_online_system.Controllers
 {
@@ -95,25 +97,33 @@ namespace Ticket_booking_online_system.Controllers
 
         [Authorize(Roles = "User")]
         [HttpGet("Create")]
+        #region Create Booking (Merged Flow)
+
+        [Authorize(Roles = "User")]
+        [HttpGet("Create")]
         public async Task<IActionResult> Create(int serviceId)
         {
+            // 1. Identify the logged-in user
             string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var user = await _userManager.FindByIdAsync(userId);
             var service = _serviceRepository.GetById(serviceId);
 
-            if (service == null || user == null) return NotFound("Service or User not found.");
+            if (service == null || user == null)
+                return NotFound("Service or User not found.");
 
+            // 2. Pass useful info to the view for the "Confirmation" UI
             ViewBag.UserName = user.Name;
             ViewBag.UserPassport = user.Passport_num;
             ViewBag.UserEmail = user.Email;
             ViewBag.ServiceType = service.ServiceType;
             ViewBag.BasePrice = service.BasePrice;
 
+            // 3. Prepare the booking model for the hidden fields in the form
             var booking = new Booking
             {
                 ServiceID = serviceId,
                 Date = DateTime.Now,
-                Status = BookingStatus.Pending
+                Status = BookingStatus.Pending // Status remains pending until payment success
             };
 
             return View(booking);
@@ -124,17 +134,58 @@ namespace Ticket_booking_online_system.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(Booking model)
         {
+            // Remove navigation properties from validation as they aren't provided by the form
             ModelState.Remove("UserID");
             ModelState.Remove("User");
             ModelState.Remove("Service");
 
-            if (!ModelState.IsValid) return RedirectToAction("Index", "Service");
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction("Index", "Service");
+            }
 
+            // 1. Get the current User ID
             string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            _bookingService.CreateBooking(model.ServiceID, userId);
 
-            return RedirectToAction(nameof(UserBookings), new { userId = userId });
+            // 2. Create the booking record in the database first
+            // Note: Use CreateBookingwithPayement to handle initial state/payment logic
+            var bookingId = _bookingService.CreateBookingwithPayement(model.ServiceID, userId);
+            var serviceEntity = _serviceRepository.GetById(model.ServiceID);
+
+            // 3. Configure Stripe Checkout Session
+            var options = new SessionCreateOptions
+            {
+                Mode = "payment",
+                // These URLs should point to your Success/Cancel actions in PaymentController
+                SuccessUrl = $"http://localhost:5237/Payment/Success?bookingId={bookingId}",
+                CancelUrl = $"http://localhost:5237/Payment/Cancel?bookingId={bookingId}",
+                LineItems = new List<SessionLineItemOptions>
+        {
+            new SessionLineItemOptions
+            {
+                PriceData = new SessionLineItemPriceDataOptions
+                {
+                    Currency = "usd",
+                    UnitAmount = (long)(serviceEntity.BasePrice * 100), // Stripe expects cents
+                    ProductData = new SessionLineItemPriceDataProductDataOptions
+                    {
+                        Name = $"SkyWings: {serviceEntity.ServiceType} Booking",
+                        Description = $"Booking Ref: #{bookingId}"
+                    }
+                },
+                Quantity = 1
+            }
         }
+            };
+
+            // 4. Create Stripe Session and Redirect
+            var service = new SessionService();
+            Session session = service.Create(options);
+
+            return Redirect(session.Url);
+        }
+
+        #endregion
 
         // --- SHARED CAPABILITIES ---
         [Authorize(Roles = "User,Admin")]
