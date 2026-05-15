@@ -12,8 +12,8 @@ using Ticket_booking_online_system.Data;
 namespace Ticket_booking_online_system.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260514205221_IdentityApplicationUser")]
-    partial class IdentityApplicationUser
+    [Migration("20260515123609_FixUserRelation")]
+    partial class FixUserRelation
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -144,9 +144,6 @@ namespace Ticket_booking_online_system.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int?>("UserID1")
-                        .HasColumnType("int");
-
                     b.HasKey("BookingID");
 
                     b.HasIndex("Flight_Number");
@@ -154,8 +151,6 @@ namespace Ticket_booking_online_system.Data.Migrations
                     b.HasIndex("ServiceID");
 
                     b.HasIndex("UserID");
-
-                    b.HasIndex("UserID1");
 
                     b.ToTable("Bookings");
                 });
@@ -313,17 +308,12 @@ namespace Ticket_booking_online_system.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int?>("UserID1")
-                        .HasColumnType("int");
-
                     b.HasKey("PaymentID");
 
                     b.HasIndex("BookingID")
                         .IsUnique();
 
                     b.HasIndex("UserID");
-
-                    b.HasIndex("UserID1");
 
                     b.ToTable("Payments");
                 });
@@ -376,16 +366,11 @@ namespace Ticket_booking_online_system.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int?>("UserID1")
-                        .HasColumnType("int");
-
                     b.HasKey("ReviewID");
 
                     b.HasIndex("ServiceID");
 
                     b.HasIndex("UserID");
-
-                    b.HasIndex("UserID1");
 
                     b.ToTable("Reviews");
                 });
@@ -455,40 +440,6 @@ namespace Ticket_booking_online_system.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("TransportationServices");
-                });
-
-            modelBuilder.Entity("DAL.Models.User", b =>
-                {
-                    b.Property<int>("UserID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserID"));
-
-                    b.Property<DateTime>("Created_at")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
-
-                    b.Property<string>("Passport_num")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("Phone")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("UserID");
-
-                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -571,12 +522,10 @@ namespace Ticket_booking_online_system.Data.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ProviderKey")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("nvarchar(max)");
@@ -613,12 +562,10 @@ namespace Ticket_booking_online_system.Data.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Name")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Value")
                         .HasColumnType("nvarchar(max)");
@@ -645,10 +592,6 @@ namespace Ticket_booking_online_system.Data.Migrations
                         .HasForeignKey("UserID")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.HasOne("DAL.Models.User", null)
-                        .WithMany("Bookings")
-                        .HasForeignKey("UserID1");
 
                     b.Navigation("Service");
 
@@ -730,10 +673,6 @@ namespace Ticket_booking_online_system.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("DAL.Models.User", null)
-                        .WithMany("Payments")
-                        .HasForeignKey("UserID1");
-
                     b.Navigation("Booking");
 
                     b.Navigation("User");
@@ -763,10 +702,6 @@ namespace Ticket_booking_online_system.Data.Migrations
                         .HasForeignKey("UserID")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.HasOne("DAL.Models.User", null)
-                        .WithMany("Reviews")
-                        .HasForeignKey("UserID1");
 
                     b.Navigation("Service");
 
@@ -871,15 +806,6 @@ namespace Ticket_booking_online_system.Data.Migrations
             modelBuilder.Entity("DAL.Models.Service", b =>
                 {
                     b.Navigation("Bookings");
-
-                    b.Navigation("Reviews");
-                });
-
-            modelBuilder.Entity("DAL.Models.User", b =>
-                {
-                    b.Navigation("Bookings");
-
-                    b.Navigation("Payments");
 
                     b.Navigation("Reviews");
                 });

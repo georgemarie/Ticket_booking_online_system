@@ -16,13 +16,17 @@ namespace BLL.Custom_Data_Annotation
                 var context = (ApplicationDbContext)validationContext.GetService(typeof(ApplicationDbContext))!;
                 var passportNum = value as string;
 
-                var currentUser = (User)validationContext.ObjectInstance;
+                var currentUser = validationContext.ObjectInstance as ApplicationUser;
 
-                if (context.Users.Any(u => u.Passport_num == passportNum && u.UserID != currentUser.UserID))
+                if (currentUser == null)
+                    return ValidationResult.Success;
+
+                if (context.Users.Any(u => u.Passport_num == passportNum && u.Id != currentUser.Id))
                 {
                     return new ValidationResult("Passport number already exists. Must be unique.");
                 }
             }
+
             return ValidationResult.Success;
         }
     }

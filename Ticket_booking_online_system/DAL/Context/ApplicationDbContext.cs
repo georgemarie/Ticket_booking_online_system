@@ -12,7 +12,7 @@ namespace Ticket_booking_online_system.Data
         }
 
         public virtual DbSet<Location> Locations { get; set; }
-        public virtual DbSet<User> Users { get; set; }
+        //public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<Review> Reviews { get; set; }
         public virtual DbSet<Service> Services { get; set; }
         public virtual DbSet<TransportationService> TransportationServices { get; set; }

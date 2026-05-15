@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Ticket_booking_online_system.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class IdentityApplicationUser : Migration
+    public partial class FixUserRelation : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -23,6 +23,9 @@ namespace Ticket_booking_online_system.Data.Migrations
                 name: "FK_Reviews_Users_UserID",
                 table: "Reviews");
 
+            migrationBuilder.DropTable(
+                name: "Users");
+
             migrationBuilder.AlterColumn<string>(
                 name: "UserID",
                 table: "Reviews",
@@ -30,12 +33,6 @@ namespace Ticket_booking_online_system.Data.Migrations
                 nullable: false,
                 oldClrType: typeof(int),
                 oldType: "int");
-
-            migrationBuilder.AddColumn<int>(
-                name: "UserID1",
-                table: "Reviews",
-                type: "int",
-                nullable: true);
 
             migrationBuilder.AlterColumn<string>(
                 name: "UserID",
@@ -45,12 +42,6 @@ namespace Ticket_booking_online_system.Data.Migrations
                 oldClrType: typeof(int),
                 oldType: "int");
 
-            migrationBuilder.AddColumn<int>(
-                name: "UserID1",
-                table: "Payments",
-                type: "int",
-                nullable: true);
-
             migrationBuilder.AlterColumn<string>(
                 name: "UserID",
                 table: "Bookings",
@@ -59,11 +50,23 @@ namespace Ticket_booking_online_system.Data.Migrations
                 oldClrType: typeof(int),
                 oldType: "int");
 
-            migrationBuilder.AddColumn<int>(
-                name: "UserID1",
-                table: "Bookings",
-                type: "int",
-                nullable: true);
+            migrationBuilder.AlterColumn<string>(
+                name: "Name",
+                table: "AspNetUserTokens",
+                type: "nvarchar(450)",
+                nullable: false,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(128)",
+                oldMaxLength: 128);
+
+            migrationBuilder.AlterColumn<string>(
+                name: "LoginProvider",
+                table: "AspNetUserTokens",
+                type: "nvarchar(450)",
+                nullable: false,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(128)",
+                oldMaxLength: 128);
 
             migrationBuilder.AddColumn<DateTime>(
                 name: "Created_at",
@@ -88,20 +91,23 @@ namespace Ticket_booking_online_system.Data.Migrations
                 nullable: false,
                 defaultValue: "");
 
-            migrationBuilder.CreateIndex(
-                name: "IX_Reviews_UserID1",
-                table: "Reviews",
-                column: "UserID1");
+            migrationBuilder.AlterColumn<string>(
+                name: "ProviderKey",
+                table: "AspNetUserLogins",
+                type: "nvarchar(450)",
+                nullable: false,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(128)",
+                oldMaxLength: 128);
 
-            migrationBuilder.CreateIndex(
-                name: "IX_Payments_UserID1",
-                table: "Payments",
-                column: "UserID1");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Bookings_UserID1",
-                table: "Bookings",
-                column: "UserID1");
+            migrationBuilder.AlterColumn<string>(
+                name: "LoginProvider",
+                table: "AspNetUserLogins",
+                type: "nvarchar(450)",
+                nullable: false,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(128)",
+                oldMaxLength: 128);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Bookings_AspNetUsers_UserID",
@@ -110,13 +116,6 @@ namespace Ticket_booking_online_system.Data.Migrations
                 principalTable: "AspNetUsers",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Restrict);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Bookings_Users_UserID1",
-                table: "Bookings",
-                column: "UserID1",
-                principalTable: "Users",
-                principalColumn: "UserID");
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Payments_AspNetUsers_UserID",
@@ -127,26 +126,12 @@ namespace Ticket_booking_online_system.Data.Migrations
                 onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_Payments_Users_UserID1",
-                table: "Payments",
-                column: "UserID1",
-                principalTable: "Users",
-                principalColumn: "UserID");
-
-            migrationBuilder.AddForeignKey(
                 name: "FK_Reviews_AspNetUsers_UserID",
                 table: "Reviews",
                 column: "UserID",
                 principalTable: "AspNetUsers",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Restrict);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Reviews_Users_UserID1",
-                table: "Reviews",
-                column: "UserID1",
-                principalTable: "Users",
-                principalColumn: "UserID");
         }
 
         /// <inheritdoc />
@@ -157,48 +142,12 @@ namespace Ticket_booking_online_system.Data.Migrations
                 table: "Bookings");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_Bookings_Users_UserID1",
-                table: "Bookings");
-
-            migrationBuilder.DropForeignKey(
                 name: "FK_Payments_AspNetUsers_UserID",
-                table: "Payments");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_Payments_Users_UserID1",
                 table: "Payments");
 
             migrationBuilder.DropForeignKey(
                 name: "FK_Reviews_AspNetUsers_UserID",
                 table: "Reviews");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_Reviews_Users_UserID1",
-                table: "Reviews");
-
-            migrationBuilder.DropIndex(
-                name: "IX_Reviews_UserID1",
-                table: "Reviews");
-
-            migrationBuilder.DropIndex(
-                name: "IX_Payments_UserID1",
-                table: "Payments");
-
-            migrationBuilder.DropIndex(
-                name: "IX_Bookings_UserID1",
-                table: "Bookings");
-
-            migrationBuilder.DropColumn(
-                name: "UserID1",
-                table: "Reviews");
-
-            migrationBuilder.DropColumn(
-                name: "UserID1",
-                table: "Payments");
-
-            migrationBuilder.DropColumn(
-                name: "UserID1",
-                table: "Bookings");
 
             migrationBuilder.DropColumn(
                 name: "Created_at",
@@ -235,6 +184,59 @@ namespace Ticket_booking_online_system.Data.Migrations
                 nullable: false,
                 oldClrType: typeof(string),
                 oldType: "nvarchar(450)");
+
+            migrationBuilder.AlterColumn<string>(
+                name: "Name",
+                table: "AspNetUserTokens",
+                type: "nvarchar(128)",
+                maxLength: 128,
+                nullable: false,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(450)");
+
+            migrationBuilder.AlterColumn<string>(
+                name: "LoginProvider",
+                table: "AspNetUserTokens",
+                type: "nvarchar(128)",
+                maxLength: 128,
+                nullable: false,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(450)");
+
+            migrationBuilder.AlterColumn<string>(
+                name: "ProviderKey",
+                table: "AspNetUserLogins",
+                type: "nvarchar(128)",
+                maxLength: 128,
+                nullable: false,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(450)");
+
+            migrationBuilder.AlterColumn<string>(
+                name: "LoginProvider",
+                table: "AspNetUserLogins",
+                type: "nvarchar(128)",
+                maxLength: 128,
+                nullable: false,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(450)");
+
+            migrationBuilder.CreateTable(
+                name: "Users",
+                columns: table => new
+                {
+                    UserID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Created_at = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
+                    Passport_num = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Users", x => x.UserID);
+                });
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Bookings_Users_UserID",
