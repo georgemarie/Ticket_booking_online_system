@@ -32,9 +32,9 @@ namespace DAL.Models
         public DateTime Payment_Date { get; set; }
 
         [ForeignKey("User")]
-        [Required(ErrorMessage = "User is required.")]
-        public int UserID { get; set; }
-        public User User { get; set; }
+        public string UserID { get; set; }
+
+        public ApplicationUser User { get; set; }
 
         [ForeignKey("Booking")]
         [Required(ErrorMessage = "Booking is required.")]

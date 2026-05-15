@@ -15,7 +15,7 @@ namespace BLL.Repository.implementaion
             : base(context)
         {
         }
-        public IEnumerable<Booking> GetUserBookings(int userId)
+        public IEnumerable<Booking> GetUserBookings(string userId)
         {
             return _context.Bookings
                 .Include(b => b.Service)

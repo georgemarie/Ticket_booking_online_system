@@ -22,7 +22,7 @@ namespace BLL.Services.Implmentation
         }
 
 
-        public bool CreateBooking(int serviceId,int userId)
+        public bool CreateBooking(int serviceId,string userId)
         {
             Booking booking = new Booking()
             {
@@ -41,7 +41,7 @@ namespace BLL.Services.Implmentation
             return true;
         }
 
-        public IEnumerable<Booking> GetUserBookings(int userId)
+        public IEnumerable<Booking> GetUserBookings(string userId)
         {
             return _bookingRepo.GetUserBookings(userId);
         }
