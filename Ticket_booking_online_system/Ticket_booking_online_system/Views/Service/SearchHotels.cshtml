@@ -39,7 +39,7 @@
                             @(item.Service?.Location?.City ?? "N/A")
                         </td>
                         <td>
-                            @* Using ToString("d") is much safer for Nullable DateTime *@
+                            @* Using ToString("yyyy-MM-dd") for consistent formatting *@
                             @(item.Check_In?.ToString("yyyy-MM-dd") ?? "N/A")
                         </td>
                         <td>
@@ -61,7 +61,9 @@
             else
             {
                 <tr>
-                    <td colspan="7" class="text-center">No hotels found for the selected criteria.</td>
+                    <td colspan="7" class="text-center text-muted py-4">
+                        No hotels found for the selected criteria.
+                    </td>
                 </tr>
             }
         </tbody>

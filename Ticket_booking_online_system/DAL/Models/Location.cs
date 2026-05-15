@@ -13,6 +13,7 @@ namespace DAL.Models
         Germany,
         Italy,
         Switzerland,
+        UK
     }
     public class Location
     {
@@ -25,10 +26,12 @@ namespace DAL.Models
 
         [Required(ErrorMessage = "City is required.")]
         [StringLength(100, ErrorMessage = "City cannot exceed 100 characters.")]
+        [EnumDataType(typeof(Country))]
         public string City { get; set; }
 
+
         [Required(ErrorMessage = "Country is required.")]
-        [EnumDataType(typeof(Country))]
+        
         public string Country { get; set; }
 
         public ICollection<Service> Services { get; set; }

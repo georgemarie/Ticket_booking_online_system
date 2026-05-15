@@ -1,16 +1,21 @@
 ﻿using BLL.Repository.Interfaces;
 using DAL.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Ticket_booking_online_system.Controllers
 {
     public class HotelController : Controller
     {
         private readonly IHotelRepository _hotelRepo;
+        private readonly IServiceRepository _serviceRepo;
+        private readonly ILocationRepository _locationRepo;
 
-        public HotelController(IHotelRepository hotelRepo)
+
+        public HotelController(IHotelRepository hotelRepo, IServiceRepository serviceRepo, ILocationRepository location)
         {
             _hotelRepo = hotelRepo;
+            _serviceRepo = serviceRepo;
         }
 
 
@@ -58,22 +63,33 @@ namespace Ticket_booking_online_system.Controllers
         //[Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
+            var services = _serviceRepo.GetAll().ToList();
+
+            ViewBag.ServiceId = new SelectList(services, "ServiceID", "ServiceType");
+
             return View();
+
 
         }
         //[Authorize(Roles = "Admin")]
-        [HttpPost("Create")]
+        [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(HotelService hotel)
+        public IActionResult Create(HotelService model)
         {
-            if (ModelState.IsValid)
+            ModelState.Remove("Service.Location");
+
+            if (!ModelState.IsValid)
             {
-                _hotelRepo.Add(hotel);
-                _hotelRepo.Save();
-                return RedirectToAction("Search");
+                ViewBag.ServiceId = new SelectList(_serviceRepo.GetAll(), "Id", "ServiceType", model.ServiceId);
+                ViewBag.LocationID = new SelectList(_locationRepo.GetAll(), "LocationID", "City");
+                return View(model);
             }
-            return View(hotel);
+
+            _hotelRepo.Add(model);
+            _hotelRepo.Save();
+            return RedirectToAction(nameof(Search));
         }
+
         #endregion
 
 

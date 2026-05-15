@@ -1,12 +1,13 @@
-﻿@model IEnumerable<DAL.Models.Service>
+@model IEnumerable<DAL.Models.Service>
+
 @{
     ViewData["Title"] = "Services - Index";
 }
+
 <div class="container mt-4">
     @if (ViewBag.ActiveService == "Hotel")
     {
         <h1>Hotel Management</h1>
-        <!-- SECTION: Hotel Search Form -->
         <div class="card mb-4 shadow-sm border-info">
             <div class="card-header bg-info text-white">
                 <h5 class="mb-0">Search for Hotels</h5>
@@ -35,7 +36,6 @@
     else
     {
         <h1>Flight Management</h1>
-        <!-- SECTION: Flight Search Form -->
         <div class="card mb-4 shadow-sm">
             <div class="card-header bg-primary text-white">
                 <h5 class="mb-0">Search for Flights</h5>
@@ -44,13 +44,19 @@
                 <form asp-controller="Service" asp-action="SearchFlights" method="post">
                     <div class="row">
                         <div class="col-md-4 mb-3">
-                            <label class="form-label">From (Origin City):</label>
-                            <input type="text" name="from" class="form-control" placeholder="e.g., Cairo" required />
+                            <label class="control-label">From (Origin)</label>
+                            <select name="from" class="form-control" required
+                                    asp-items="@Html.GetEnumSelectList<DAL.Models.Country>()">
+                                <option value="">-- Select Origin --</option>
+                            </select>
                         </div>
+                        
+                        @* KEPT YOURS: Text input for Destination *@
                         <div class="col-md-4 mb-3">
                             <label class="form-label">To (Destination City):</label>
                             <input type="text" name="to" class="form-control" placeholder="e.g., Madrid" required />
                         </div>
+
                         <div class="col-md-3 mb-3">
                             <label class="form-label">Departure Date:</label>
                             <input type="date" name="date" class="form-control" required />
@@ -70,7 +76,6 @@
         </div>
     }
 
-    <!-- SECTION 2: List of All Services -->
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h3>All Services</h3>
         <a asp-action="Create" class="btn btn-primary">Create New Service</a>
