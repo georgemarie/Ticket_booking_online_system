@@ -11,7 +11,7 @@
     </div>
 
     <table class="table table-hover table-bordered shadow-sm">
-        <thead class="thead-dark bg-dark text-white">
+        <thead class="thead-dark">
             <tr>
                 <th>Hotel Name</th>
                 <th>Room Type</th>
@@ -23,7 +23,7 @@
             </tr>
         </thead>
         <tbody>
-            @if (Model != null && Model.Any())
+            @foreach (var item in Model)
             {
                 <tr>
                     <td>
