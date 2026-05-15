@@ -2,15 +2,18 @@ using BLL.Repository.implementaion;
 using BLL.Repository.Interfaces;
 using BLL.Services.Implmentation;
 using BLL.Services.interfaces;
+using DAL.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Ticket_booking_online_system.Data;
+using Ticket_booking_online_system.Seed;
 
 namespace Ticket_booking_online_system
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -32,12 +35,43 @@ namespace Ticket_booking_online_system
             builder.Services.AddScoped<
     IServiceRepository,
     ServiceRepository>();
-            builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+            builder.Services
+    .AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+            builder.Services.Configure<IdentityOptions>(options =>
+            {
+                options.SignIn.RequireConfirmedAccount = false;
+            });
+          
             builder.Services.AddControllersWithViews();
-
+            builder.Services.AddRazorPages();
+            builder.Services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Identity/Account/Login";
+                options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+            });
             var app = builder.Build();
+            using (var scope = app.Services.CreateScope())
+            {
+                await IdentitySeeder.SeedAdminAsync(scope.ServiceProvider);
+            }
+            CreateRolesAsync(app).GetAwaiter().GetResult();
 
+            async Task CreateRolesAsync(WebApplication app)
+            {
+                using var scope = app.Services.CreateScope();
+
+                var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+                string[] roles = { "Admin", "User" };
+
+                foreach (var role in roles)
+                {
+                    if (!await roleManager.RoleExistsAsync(role))
+                    {
+                        await roleManager.CreateAsync(new IdentityRole(role));
+                    }
+                }
+            }
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
@@ -49,6 +83,7 @@ namespace Ticket_booking_online_system
             }
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapStaticAssets();

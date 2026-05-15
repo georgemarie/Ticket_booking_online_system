@@ -29,7 +29,7 @@
                 <td>
                     <a asp-action="Details" asp-route-id="@item.BookingID" class="btn btn-sm btn-info">Details</a>
                     <a asp-action="Edit" asp-route-id="@item.BookingID" class="btn btn-sm btn-warning">Edit</a>
-                    <a asp-action="UserBookings" asp-route-userId="@item.User?.UserID" class="btn btn-sm btn-secondary">User Bookings</a> 
+                    @* <a asp-action="UserBookings" asp-route-userId="@item.User?.UserID" class="btn btn-sm btn-secondary">User Bookings</a>  *@
 
                     <form asp-action="Cancel" asp-route-id="@item.BookingID" method="post" style="display:inline">
                         <button type="submit" class="btn btn-sm btn-danger"

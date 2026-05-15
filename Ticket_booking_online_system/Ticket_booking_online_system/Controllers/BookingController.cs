@@ -2,12 +2,15 @@
 using BLL.Repository.Interfaces;
 using BLL.Services.interfaces;
 using DAL.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Security.Claims;
 
 namespace Ticket_booking_online_system.Controllers
 {
+    [Authorize]
     [Route("Booking")]
 
     public class BookingController : Controller
@@ -38,17 +41,17 @@ namespace Ticket_booking_online_system.Controllers
         #endregion
         #endregion
         #region UserBookings
-
+        [Authorize(Roles = "User")]
         // GET: /Booking/UserBookings/5
-        [HttpGet("UserBookings/{userId:int}")]
-        public IActionResult UserBookings(int userId)
+        [HttpGet("UserBookings/{userId}")]
+        public IActionResult UserBookings(string userId)
         {
             var bookings = _bookingRepository.GetUserBookings(userId);
             return View(bookings);
         }
         #endregion
         #region Details Of Booking
-
+        [Authorize(Roles = "User")]
         // GET: /Booking/Details/5
         [HttpGet("Details/{id:int}")]
         public IActionResult Details(int id)
@@ -64,7 +67,7 @@ namespace Ticket_booking_online_system.Controllers
         #endregion
 
         #region Create Booking
-
+        [Authorize(Roles = "User")]
         // GET: /Booking/Create
         [HttpGet("Create")]
         public IActionResult Create()
@@ -73,7 +76,7 @@ namespace Ticket_booking_online_system.Controllers
             ViewBag.ServiceID = new SelectList(_serviceRepository.GetAll(), "ServiceID", "ServiceType");
             return View();
         }
-
+        [Authorize(Roles = "User")]
         // POST: /Booking/Create
         [HttpPost("Create")]
         [ValidateAntiForgeryToken]
@@ -81,15 +84,16 @@ namespace Ticket_booking_online_system.Controllers
         {
             if (!ModelState.IsValid)
             {
-                ViewBag.UserID = new SelectList(_userRepository.GetAll(), "UserID", "Name");
+               // ViewBag.UserID = new SelectList(_userRepository.GetAll(), "UserID", "Name");
                 ViewBag.ServiceID = new SelectList(_serviceRepository.GetAll(), "ServiceID", "ServiceType");
                 return View(model);
             }
+
             //MUST BE LOGGINED 
             // int userId = model.UserID;
-
-            _bookingService.CreateBooking(model.ServiceID, model.UserID);
-            return RedirectToAction(nameof(UserBookings), new { userId = model.UserID });
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            _bookingService.CreateBooking(model.ServiceID, userId);
+            return RedirectToAction(nameof(UserBookings), new { userId = userId });
         }
 
         #endregion
