@@ -70,9 +70,14 @@ namespace BLL.Repository.implementaion
         public FlightService? GetByIdWithIncludes(int id)
         {
             return _context.FlightServices
-                .Include(fs => fs.Flight)
-                .Include(fs => fs.Service)
-                .FirstOrDefault(fs => fs.Id == id);
+                    .Include(fs => fs.Service)
+                    .Include(fs => fs.Flight)
+                        .ThenInclude(f => f.Airline)
+                    .Include(fs => fs.Flight)
+                        .ThenInclude(f => f.OriginLocation) 
+                    .Include(fs => fs.Flight)
+                        .ThenInclude(f => f.DestLocation)   
+                    .FirstOrDefault(fs => fs.Id == id);
         }
 
         public IEnumerable<FlightService> Search(string from, string to, DateTime date)

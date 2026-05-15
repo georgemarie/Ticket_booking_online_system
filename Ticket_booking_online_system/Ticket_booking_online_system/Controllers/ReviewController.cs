@@ -1,33 +1,31 @@
 ﻿using BLL.Repository.Interfaces;
 using DAL.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.General;
-using System;
+using System.Linq;
 
 namespace Ticket_booking_online_system.Controllers
 {
+    [Authorize]
     [Route("Review")]
-    //[Authorize]
     public class ReviewController : Controller
     {
         private readonly IReviewRepository _reviewRepository;
         private readonly IServiceRepository _serviceRepo;
-        private readonly IGenericRepository<User> _userRepository;
+        private readonly UserManager<ApplicationUser> _userManager;
 
         public ReviewController(IReviewRepository reviewRepository,
                                 IServiceRepository serviceRepo,
-                                IGenericRepository<User> userRepository)
+                                UserManager<ApplicationUser> userManager)
         {
             _reviewRepository = reviewRepository;
             _serviceRepo = serviceRepo;
-            _userRepository = userRepository;
+            _userManager = userManager;
         }
 
-        // GET: Reviews
-        //[AllowAnonymous]
+        [AllowAnonymous] // Anyone can view reviews
         [HttpGet("")]
         public ActionResult Index()
         {
@@ -35,7 +33,6 @@ namespace Ticket_booking_online_system.Controllers
             return View(reviews);
         }
 
-        // GET: Reviews/Details/5
         [AllowAnonymous]
         [HttpGet("Details/{id}")]
         public ActionResult Details(int id)
@@ -46,18 +43,19 @@ namespace Ticket_booking_online_system.Controllers
             return View(review);
         }
 
-        // GET: Reviews/Create
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "User,Admin")] // Users should write reviews
         [HttpGet("Create")]
         public IActionResult Create()
         {
             ViewBag.Services = new SelectList(_serviceRepo.GetAll(), "ServiceID", "ServiceType");
-            ViewBag.Users = new SelectList(_userRepository.GetAll(), "UserID", "Email");
+
+            // If User, pre-select them. If Admin, let them choose.
+            ViewBag.Users = new SelectList(_userManager.Users.ToList(), "Id", "Email");
 
             return View(new Review());
         }
-        // POST: Reviews/Create
-        //[Authorize(Roles = "Admin")]
+
+        [Authorize(Roles = "User,Admin")]
         [HttpPost("Create")]
         [ValidateAntiForgeryToken]
         public ActionResult Create(Review review)
@@ -69,13 +67,11 @@ namespace Ticket_booking_online_system.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewBag.Services = new SelectList(_serviceRepo.GetAll(), "ServiceID", "ServiceType", review.ServiceID);
-            ViewBag.Users = new SelectList(_userRepository.GetAll(), "UserID", "Email", review.UserID);
+            ViewBag.Users = new SelectList(_userManager.Users.ToList(), "Id", "Email", review.UserID);
             return View(review);
-        
         }
 
-        // GET: ReviewController/Edit/5
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")] // Only Admins should edit reviews
         [HttpGet("Edit/{id}")]
         public IActionResult Edit(int id)
         {
@@ -85,14 +81,13 @@ namespace Ticket_booking_online_system.Controllers
             if (review == null) return NotFound();
 
             ViewBag.Services = new SelectList(_serviceRepo.GetAll(), "ServiceID", "ServiceType", review.ServiceID);
-            ViewBag.Users = new SelectList(_userRepository.GetAll(), "UserID", "Email", review.UserID);
+            ViewBag.Users = new SelectList(_userManager.Users.ToList(), "Id", "Email", review.UserID);
 
             return View(review);
         }
 
-        // POST: ReviewController/Edit/5
-        //[Authorize(Roles = "Admin")]
-        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [HttpPost("Edit/{id}")]
         [ValidateAntiForgeryToken]
         public IActionResult Edit(int id, Review review)
         {
@@ -101,7 +96,7 @@ namespace Ticket_booking_online_system.Controllers
             if (!ModelState.IsValid)
             {
                 ViewBag.Services = new SelectList(_serviceRepo.GetAll(), "ServiceID", "ServiceType", review.ServiceID);
-                ViewBag.Users = new SelectList(_userRepository.GetAll(), "UserID", "Email", review.UserID);
+                ViewBag.Users = new SelectList(_userManager.Users.ToList(), "Id", "Email", review.UserID);
                 return View(review);
             }
 
@@ -110,8 +105,7 @@ namespace Ticket_booking_online_system.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: ReviewController/Delete/5
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")] // Only Admins can delete
         [HttpGet("Delete/{id}")]
         public ActionResult Delete(int id)
         {
@@ -121,7 +115,7 @@ namespace Ticket_booking_online_system.Controllers
             return View(review);
         }
 
-        // POST: ReviewController/Delete/5
+        [Authorize(Roles = "Admin")]
         [HttpPost("Delete/{id}")]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
@@ -135,6 +129,5 @@ namespace Ticket_booking_online_system.Controllers
 
             return RedirectToAction(nameof(Index));
         }
-
     }
 }

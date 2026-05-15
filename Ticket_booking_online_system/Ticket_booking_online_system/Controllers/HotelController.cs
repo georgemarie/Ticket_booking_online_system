@@ -1,77 +1,40 @@
 ﻿using BLL.Repository.Interfaces;
 using DAL.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Linq;
 
 namespace Ticket_booking_online_system.Controllers
 {
+    [Authorize(Roles = "Admin")] // Entire controller is Admin Only
     public class HotelController : Controller
     {
         private readonly IHotelRepository _hotelRepo;
         private readonly IServiceRepository _serviceRepo;
         private readonly ILocationRepository _locationRepo;
 
-
-        public HotelController(IHotelRepository hotelRepo, IServiceRepository serviceRepo, ILocationRepository location)
+        public HotelController(IHotelRepository hotelRepo, IServiceRepository serviceRepo, ILocationRepository locationRepo)
         {
             _hotelRepo = hotelRepo;
             _serviceRepo = serviceRepo;
+            _locationRepo = locationRepo;
         }
 
-
-        #region  Admin Responsibilities
-        #region  EditHotel 
-        // GET: Edit
-        [HttpGet]
-        //[Authorize(Roles = "Admin")]
-        public IActionResult Edit(int id)
+        public IActionResult Search()
         {
-            if (id <= 0)
-                return BadRequest();
-
-            var hotel = _hotelRepo.GetById(id);
-
-            if (hotel == null)
-                return NotFound();
-
-            return View(hotel);
+            var hotels = _hotelRepo.GetAllWithIncludes();
+            return View(hotels);
         }
 
-        // POST: Edit
-        //[Authorize(Roles = "Admin")]
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Edit(HotelService hotel)
-        {
-            if (hotel == null)
-                return BadRequest();
-            if (ModelState.IsValid)
-            {
-                _hotelRepo.Update(hotel);
-                _hotelRepo.Save();
-
-                return RedirectToAction(nameof(Search));
-            }
-
-            return View(hotel);
-        }
-
-        #endregion
-
-        #region  AddingHotel
         [HttpGet]
-        //[Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             var services = _serviceRepo.GetAll().Distinct().ToList();
-
             ViewBag.ServiceId = new SelectList(services, "ServiceID", "ServiceType");
-
             return View();
-
-
         }
-        //[Authorize(Roles = "Admin")]
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Create(HotelService model)
@@ -90,63 +53,48 @@ namespace Ticket_booking_online_system.Controllers
             return RedirectToAction(nameof(Search));
         }
 
-        #endregion
-
-
-        #region Delete Hotel
-        // GET: Delete
         [HttpGet]
-        //[Authorize(Roles = "Admin")]
-        public IActionResult Delete(int id)
+        public IActionResult Edit(int id)
         {
-            if (id <= 0)
-                return BadRequest();
-
+            if (id <= 0) return BadRequest();
             var hotel = _hotelRepo.GetById(id);
-
-            if (hotel == null)
-                return NotFound();
-
+            if (hotel == null) return NotFound();
             return View(hotel);
         }
 
-        // POST: Delete
-        //[Authorize(Roles = "Admin")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Edit(HotelService hotel)
+        {
+            if (hotel == null) return BadRequest();
+            if (ModelState.IsValid)
+            {
+                _hotelRepo.Update(hotel);
+                _hotelRepo.Save();
+                return RedirectToAction(nameof(Search));
+            }
+            return View(hotel);
+        }
+
+        [HttpGet]
+        public IActionResult Delete(int id)
+        {
+            if (id <= 0) return BadRequest();
+            var hotel = _hotelRepo.GetById(id);
+            if (hotel == null) return NotFound();
+            return View(hotel);
+        }
+
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
         {
             var hotel = _hotelRepo.GetById(id);
-
-            if (hotel == null)
-                return NotFound();
+            if (hotel == null) return NotFound();
 
             _hotelRepo.Delete(hotel);
             _hotelRepo.Save();
-
             return RedirectToAction(nameof(Search));
-        }
-
-
-
-        #endregion
-
-
-        #endregion
-
-
-        public IActionResult Search()
-        {
-            var hotels = _hotelRepo.GetAllWithIncludes();
-
-            return View(hotels);
-        }
-
-        public IActionResult Results(string city)
-        {
-            var hotels = _hotelRepo.Search(city);
-
-            return View("Search", hotels);
         }
 
         public IActionResult Details(int serviceId)

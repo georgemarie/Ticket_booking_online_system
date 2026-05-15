@@ -1,27 +1,26 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using DAL.Models
-
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
+
 <ul class="navbar-nav">
-@if (SignInManager.IsSignedIn(User))
-{
-    <li class="nav-item">
-        <a  class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @User.Identity?.Name!</a>
-    </li>
-    <li class="nav-item">
-        <form  class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-            <button  type="submit" class="nav-link btn btn-link text-dark">Logout</button>
-        </form>
-    </li>
-}
-else
-{
-    <li class="nav-item">
-        <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">Register</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">Login</a>
-    </li>
-}
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <li class="nav-item d-flex align-items-center">
+            <span class="nav-link text-light me-3">
+                <i class="fa-solid fa-user-circle me-1"></i> Hello, @User.Identity?.Name!
+            </span>
+        </li>
+        <li class="nav-item">
+            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Service", new { area = "" })">
+                <button type="submit" class="btn btn-outline-light btn-sm mt-1">Logout</button>
+            </form>
+        </li>
+    }
+    else
+    {
+        <li class="nav-item ms-2">
+            <a class="btn btn-sky btn-sm mt-1" asp-area="Identity" asp-page="/Account/Login">Login</a>
+        </li>
+    }
 </ul>

@@ -51,9 +51,19 @@
                             </span>
                         </td>
                         <td>
-                            <a asp-action="Details" asp-controller="Hotel" asp-route-id="@item.ServiceId" class="btn btn-sm btn-primary">
-                                Book Room
-                            </a>
+                            <span class="text-success fw-bold">
+                                @(item.Service?.BasePrice.ToString("C") ?? "0.00")
+                            </span>
+                        </td>
+                        <td>
+                            @if (User.IsInRole("User"))
+                            {
+                                <a asp-action="Create" asp-controller="Booking" asp-route-serviceId="@item.ServiceId" class="btn btn-sm btn-primary">Book Room</a>
+                            }
+                            else if (!User.Identity.IsAuthenticated)
+                            {
+                                <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-outline-primary btn-sm">Login to Book</a>
+                            }
                         </td>
                     </tr>
                 }

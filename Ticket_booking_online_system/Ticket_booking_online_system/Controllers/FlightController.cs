@@ -1,22 +1,21 @@
 ﻿using BLL.Repository.implementaion;
 using BLL.Repository.Interfaces;
-using BLL.Services.interfaces;
 using DAL.Models;
-using DAL.ViewModels;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace Ticket_booking_online_system.Controllers
 {
+    [Authorize(Roles = "Admin")] // Entire controller is Admin Only
     [Route("Flight")]
-    //[Authorize]
     public class FlightController : Controller
     {
         private readonly IFlightServiceRepository _flightRepo;
         private readonly IAirlineRepository _airlineRepo;
         private readonly ILocationRepository _locRepo;
+
         public FlightController(IFlightServiceRepository flightRepo, IAirlineRepository airlineRepo, ILocationRepository locRepo)
         {
             _flightRepo = flightRepo;
@@ -24,8 +23,6 @@ namespace Ticket_booking_online_system.Controllers
             _locRepo = locRepo;
         }
 
-        // GET: Flights
-        //[AllowAnonymous]
         [HttpGet("")]
         public ActionResult Index()
         {
@@ -33,20 +30,19 @@ namespace Ticket_booking_online_system.Controllers
             return View(availableFlights);
         }
 
-        // GET: Flights/Details/5
-        //[AllowAnonymous]
         [HttpGet("Details/{id}")]
+        [AllowAnonymous] // Or your preferred role
         public ActionResult Details(int id)
         {
             if (id < 0) return BadRequest();
-            var flight = _flightRepo.GetById(id);
+
+            // FIX: Change GetById to GetByIdWithIncludes
+            var flight = _flightRepo.GetByIdWithIncludes(id);
+
             if (flight == null) return NotFound();
             return View(flight);
         }
 
-        #region Admin Controllers
-        // GET: Flights/Create
-        //[Authorize(Roles = "Admin")]
         [HttpGet("Create")]
         public ActionResult Create()
         {
@@ -59,6 +55,7 @@ namespace Ticket_booking_online_system.Controllers
             var model = new FlightService { Flight = new Flight(), Service = new Service() };
             return View(model);
         }
+
         [HttpPost("Create")]
         [ValidateAntiForgeryToken]
         public IActionResult Create(FlightService model)
@@ -73,18 +70,13 @@ namespace Ticket_booking_online_system.Controllers
             ModelState.Remove(nameof(FlightService.Flight_Number));
             ModelState.Remove("Service.ServiceType");
             ModelState.Remove("Service.LocationID");
-
             ModelState.Remove("Flight.Airline");
             ModelState.Remove("Flight.OriginLocation");
             ModelState.Remove("Flight.DestLocation");
             ModelState.Remove("Flight.Bookings");
-
             ModelState.Remove("Service.Location");
             ModelState.Remove("Service.Reviews");
             ModelState.Remove("Service.Bookings");
-
-            TryValidateModel(model.Flight, "Flight");
-            TryValidateModel(model.Service, "Service");
 
             if (!ModelState.IsValid)
             {
@@ -108,8 +100,6 @@ namespace Ticket_booking_online_system.Controllers
             }
         }
 
-        // GET: Flights/Edit/5
-        //[Authorize(Roles = "Admin")]
         [HttpGet("Edit/{id}")]
         public IActionResult Edit(int id)
         {
@@ -121,16 +111,12 @@ namespace Ticket_booking_online_system.Controllers
             model.Flight ??= new Flight();
             model.Service ??= new Service();
 
-            ViewBag.Airlines = new SelectList(
-                _airlineRepo.GetAll(), "Airline_ID", "Airline_Name",
-                model.Flight.Airline_ID);
-            ViewBag.Locations = new SelectList(
-                _locRepo.GetAll(), "LocationID", "City");
+            ViewBag.Airlines = new SelectList(_airlineRepo.GetAll(), "Airline_ID", "Airline_Name", model.Flight.Airline_ID);
+            ViewBag.Locations = new SelectList(_locRepo.GetAll(), "LocationID", "City");
 
             return View(model);
         }
 
-        // POST: Flights/Edit/5
         [HttpPost("Edit/{id}")]
         [ValidateAntiForgeryToken]
         public IActionResult Edit(int id, FlightService model)
@@ -148,6 +134,7 @@ namespace Ticket_booking_online_system.Controllers
             ModelState.Remove("Service.Location");
             model.Flight_Number = model.Flight?.Flight_Number;
             ModelState.Remove(nameof(FlightService.Flight_Number));
+
             if (!ModelState.IsValid)
             {
                 ViewBag.Airlines = new SelectList(_airlineRepo.GetAll(), "Airline_ID", "Airline_Name", model.Flight?.Airline_ID);
@@ -156,11 +143,11 @@ namespace Ticket_booking_online_system.Controllers
             }
             entity.Service.BasePrice = model.Service.BasePrice;
             entity.Service.ServiceType = "Flight";
-            entity.Service.LocationID = model.Flight.Origin_LocationID; 
+            entity.Service.LocationID = model.Flight.Origin_LocationID;
             entity.Flight.Origin_LocationID = model.Flight.Origin_LocationID;
             entity.Flight.Dest_LocationID = model.Flight.Dest_LocationID;
             entity.Flight.Depart_Date = model.Flight.Depart_Date;
-            entity.Flight.Arrival_Time = model.Flight.Arrival_Time; 
+            entity.Flight.Arrival_Time = model.Flight.Arrival_Time;
             entity.Flight.Airline_ID = model.Flight.Airline_ID;
             entity.Flight.Available_Seats = model.Flight.Available_Seats;
             entity.Flight.Class = model.Flight.Class;
@@ -171,8 +158,6 @@ namespace Ticket_booking_online_system.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: Flights/Delete/5
-        //[Authorize(Roles = "Admin")]
         [HttpGet("Delete/{id}")]
         public ActionResult Delete(int id)
         {
@@ -182,22 +167,16 @@ namespace Ticket_booking_online_system.Controllers
             return View(model);
         }
 
-        // POST: Flights/Delete/5
-        //[Authorize(Roles = "Admin")]
         [HttpPost("Delete/{id}")]
         [ValidateAntiForgeryToken]
         public ActionResult Delete(FlightService flight)
         {
             var deletedFlight = _flightRepo.GetById(flight.Id);
             if (deletedFlight == null) return NotFound();
-            if (ModelState.IsValid)
-            {
-                _flightRepo.Delete(deletedFlight);
-                _flightRepo.Save();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(deletedFlight);
-        } 
-        #endregion
+
+            _flightRepo.Delete(deletedFlight);
+            _flightRepo.Save();
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

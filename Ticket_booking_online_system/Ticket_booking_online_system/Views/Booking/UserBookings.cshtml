@@ -1,40 +1,57 @@
 ﻿@model IEnumerable<DAL.Models.Booking>
+
 @{
-    ViewData["Title"] = "My Bookings";
+    ViewData["Title"] = "My Trips";
 }
 
-<h1>My Bookings</h1>
-<p>
-    <a asp-action="Create" class="btn btn-primary">New Booking</a>
-</p>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 style="color: var(--dark-blue);"><i class="fa-solid fa-suitcase-rolling me-2"></i>My Upcoming Trips</h2>
+        <a asp-controller="Service" asp-action="Index" class="btn btn-sky"><i class="fa-solid fa-plus me-1"></i> Book New Trip</a>
+    </div>
 
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Date</th>
-            <th>Status</th>
-            <th>Service</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.Date.ToShortDateString()</td>
-                <td>@item.Status</td>
-                <td>@item.Service?.ServiceType</td>
-                <td>
-                    <a asp-action="Details" asp-route-id="@item.BookingID" class="btn btn-sm btn-info">Details</a>
-                    <form asp-action="Cancel" asp-route-id="@item.BookingID" method="post" style="display:inline">
-                        @Html.AntiForgeryToken()
-                        <button type="submit" class="btn btn-sm btn-danger"
-                                onclick="return confirm('Cancel this booking?')">
-                            Cancel
-                        </button>
-                    </form>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info text-center py-5 sky-card">
+            <h4>You have no upcoming trips.</h4>
+            <p class="text-muted">It's time to plan your next adventure!</p>
+            <a asp-controller="Service" asp-action="Index" class="btn btn-primary mt-2">Explore Destinations</a>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            @foreach (var item in Model)
+            {
+                <div class="col-md-6 col-lg-4">
+                    <div class="card sky-card h-100 border-top border-4 @(item.Status == DAL.Models.BookingStatus.Confirmed ? "border-success" : (item.Status == DAL.Models.BookingStatus.Cancelled ? "border-danger" : "border-warning"))">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between mb-3">
+                                <span class="badge @(item.Status == DAL.Models.BookingStatus.Confirmed ? "bg-success" : (item.Status == DAL.Models.BookingStatus.Cancelled ? "bg-danger" : "bg-warning text-dark"))">
+                                    @item.Status
+                                </span>
+                                <small class="text-muted fw-bold">#@item.BookingID.ToString("D5")</small>
+                            </div>
+                            
+                            <h5 class="card-title fw-bold text-dark mb-1">@item.Service?.ServiceType</h5>
+                            <p class="text-muted mb-3"><i class="fa-regular fa-calendar me-2"></i>@item.Date.ToString("MMM dd, yyyy")</p>
+                            
+                            <h3 class="text-success fw-bold mb-0">@(item.Service?.BasePrice.ToString("C") ?? "$0.00")</h3>
+                        </div>
+                        <div class="card-footer bg-light p-3 d-flex justify-content-between align-items-center border-top-0">
+                            <a asp-action="Details" asp-route-id="@item.BookingID" class="btn btn-sm btn-outline-primary">View Ticket</a>
+                            
+                            @if (item.Status != DAL.Models.BookingStatus.Cancelled)
+                            {
+                                <form asp-action="Cancel" asp-route-id="@item.BookingID" method="post" class="m-0">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure you want to cancel this booking? Cancellation fees may apply.')">Cancel Trip</button>
+                                </form>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

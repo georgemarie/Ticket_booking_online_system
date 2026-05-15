@@ -1,14 +1,14 @@
 ﻿using BLL.Repository.Interfaces;
 using DAL.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System;
+using System.Linq;
 
 namespace Ticket_booking_online_system.Controllers
 {
     [Route("Service")]
-    //[Authorize]
     public class ServiceController : Controller
     {
         private IServiceRepository _ServiceRepository { get; }
@@ -24,52 +24,53 @@ namespace Ticket_booking_online_system.Controllers
             _LocationRepository = locationRepository;
         }
 
-        // GET: Services
-        //[AllowAnonymous]
+        // --- PUBLIC SEARCH FLOW ---
+        [AllowAnonymous]
         [HttpGet("")]
-        public ActionResult Index(string type = "Flight")
+        public ActionResult Index(string type = "Portal")
         {
             ViewBag.ActiveService = type;
             var services = _ServiceRepository.GetAll();
 
             var allCities = _LocationRepository.GetAll()
-            .Where(loc => !string.IsNullOrEmpty(loc.City))
-            .Select(loc => loc.City)
-            .Distinct()
-            .ToList();
+                .Where(loc => !string.IsNullOrEmpty(loc.City))
+                .Select(loc => loc.City).Distinct().ToList();
 
-            ViewBag.availableCities = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(allCities);
-
+            ViewBag.availableCities = new SelectList(allCities);
             return View(services);
         }
 
-        [HttpPost("SearchFlights")] // Matches: /Services/SearchFlights
+        [AllowAnonymous]
+        [HttpPost("SearchFlights")]
         public ActionResult SearchFlights(string from, string to, DateTime date)
         {
             var avaliableFlights = _FlightService.Search(from, to, date);
             if (!avaliableFlights.Any())
             {
-                ViewBag.Message = "No Available No Flights found.";
+                ViewBag.Message = "No Available Flights found.";
                 ViewBag.ActiveService = "Flight";
+                ViewBag.availableCities = new SelectList(_LocationRepository.GetAll().Select(l => l.City).Distinct().ToList());
                 return View("Index", _ServiceRepository.GetAll());
             }
             return View("SearchFlights", avaliableFlights);
         }
-        [HttpPost("SearchHotels")] // Matches: /Services/SearchHotels
+
+        [AllowAnonymous]
+        [HttpPost("SearchHotels")]
         public ActionResult SearchHotels(string city)
         {
-            var avaliableHotels = _HotelRepository.Search(city); 
+            var avaliableHotels = _HotelRepository.Search(city);
             if (!avaliableHotels.Any())
             {
                 ViewBag.Message = "No Hotels found in that city.";
                 ViewBag.ActiveService = "Hotel";
+                ViewBag.availableCities = new SelectList(_LocationRepository.GetAll().Select(l => l.City).Distinct().ToList());
                 return View("Index", _ServiceRepository.GetAll());
             }
             return View("SearchHotels", avaliableHotels);
         }
 
-        // GET: Services/Details/5
-        //[Authorize(Roles = "Admin")]
+        [AllowAnonymous]
         [HttpGet("Details/{id}")]
         public ActionResult Details(int id)
         {
@@ -77,9 +78,8 @@ namespace Ticket_booking_online_system.Controllers
             return View(service);
         }
 
-        #region Admin Controllers
-        // GET: Services/Create
-        //[Authorize(Roles = "Admin")]
+        // --- ADMIN CRUD FLOW ---
+        [Authorize(Roles = "Admin")]
         [HttpGet("Create")]
         public ActionResult Create()
         {
@@ -88,8 +88,7 @@ namespace Ticket_booking_online_system.Controllers
             return View();
         }
 
-        // POST: Services/Create
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [HttpPost("Create")]
         [ValidateAntiForgeryToken]
         public ActionResult Create(Service service)
@@ -102,11 +101,9 @@ namespace Ticket_booking_online_system.Controllers
             var locations = _LocationRepository.GetAll();
             ViewBag.LocationID = new SelectList(locations, "LocationID", "City", service.LocationID);
             return View(service);
-
         }
 
-        // GET: Services/Edit/5
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [HttpGet("Edit/{id}")]
         public ActionResult Edit(int id)
         {
@@ -116,27 +113,20 @@ namespace Ticket_booking_online_system.Controllers
             return View(service);
         }
 
-        // POST: Services/Edit/5
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [HttpPost("Edit/{id}")]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(Service service)
         {
-            var editService = _ServiceRepository.GetById(service.ServiceID);
-            if (editService == null) return NotFound();
             if (ModelState.IsValid)
             {
-                _ServiceRepository.Update(editService);
+                _ServiceRepository.Update(service);
                 return RedirectToAction(nameof(Index));
             }
-            else
-            {
-                return View(service);
-            }
+            return View(service);
         }
 
-        // GET: Services/Delete/5
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [HttpGet("Delete/{id}")]
         public ActionResult Delete(int id)
         {
@@ -145,24 +135,17 @@ namespace Ticket_booking_online_system.Controllers
             if (service == null) return NotFound();
             return View(service);
         }
-        // POST: Services/Delete/5
-        //[Authorize(Roles = "Admin")]
+
+        [Authorize(Roles = "Admin")]
         [HttpPost("Delete/{id}")]
         [ValidateAntiForgeryToken]
         public ActionResult Delete(Service service)
         {
             var deletedService = _ServiceRepository.GetById(service.ServiceID);
             if (deletedService == null) return NotFound();
-            if (ModelState.IsValid)
-            {
-                _ServiceRepository.Delete(deletedService);
-                return RedirectToAction(nameof(Index));
-            }
-            else
-            {
-                return View(service);
-            }
-        } 
-        #endregion
+
+            _ServiceRepository.Delete(deletedService);
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

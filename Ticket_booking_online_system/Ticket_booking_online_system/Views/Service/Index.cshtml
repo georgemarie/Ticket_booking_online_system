@@ -1,111 +1,184 @@
+@using System.Security.Claims
 @model IEnumerable<DAL.Models.Service>
 
 @{
-    ViewData["Title"] = "Services - Index";
+    ViewData["Title"] = "Home";
 }
 
-<div class="container mt-4">
-    @if (ViewBag.ActiveService == "Hotel")
-    {
-        <h1>Hotel Management</h1>
-        <div class="card mb-4 shadow-sm border-info">
-            <div class="card-header bg-info text-white">
-                <h5 class="mb-0">Search for Hotels</h5>
-            </div>
-            <div class="card-body">
-                <form asp-controller="Service" asp-action="SearchHotels" method="post">
-                    <div class="row align-items-end">
-                        <div class="col-md-9 mb-3">
-                            <label class="form-label">City:</label>
-                            <input type="text" name="city" class="form-control" placeholder="e.g. Paris" required />
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <button type="submit" class="btn btn-info text-white w-100">Search Hotels</button>
-                        </div>
-                    </div>
-                </form>
-                @if (ViewBag.Message != null)
-                {
-                    <div class="alert alert-warning mt-3">
-                        @ViewBag.Message
-                    </div>
-                }
+@if (User.IsInRole("Admin"))
+{
+    <div class="row justify-content-center mt-5">
+        <div class="col-12 text-center mb-5">
+            <h1 class="display-5 fw-bold" style="color: var(--dark-blue);">Admin Control Center</h1>
+            <p class="lead text-muted">Manage the SkyWings platform from your dashboard.</p>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card sky-card h-100 text-center p-4 border-top border-primary border-4">
+                <div class="card-body d-flex flex-column">
+                    <i class="fa-solid fa-plane-departure fa-4x text-primary mb-4 mt-2"></i>
+                    <h3 class="fw-bold text-dark">Manage Flights</h3>
+                    <p class="text-muted mb-4">Create new routes, update schedules, and manage airline pricing.</p>
+                    <a asp-controller="Flight" asp-action="Index" class="btn btn-sky btn-lg mt-auto w-100">Go to Flights</a>
+                </div>
             </div>
         </div>
-    }
-    else
-    {
-        <h1>Flight Management</h1>
-        <div class="card mb-4 shadow-sm">
-            <div class="card-header bg-primary text-white">
-                <h5 class="mb-0">Search for Flights</h5>
-            </div>
-            <div class="card-body">
-                <form asp-controller="Service" asp-action="SearchFlights" method="post">
-                    <div class="row">
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">From (Origin City):</label>
-                            <select name="from" class="form-control" required asp-items="@ViewBag.availableCities">
-                                <option value="">-- Select Origin --</option>
-                            </select>
-                        </div>
-               
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">To (Destination City):</label>
-                            <select name="to" class="form-control" required asp-items="@ViewBag.availableCities">
-                                <option value="">-- Select Destination --</option>
-                            </select>
-                        </div>
 
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label">Departure Date:</label>
-                            <input type="date" name="date" class="form-control" required />
-                        </div>
-    
-                        <div class="col-md-1 mb-3 d-flex align-items-end">
-                            <button type="submit" class="btn btn-success w-100">Search</button>
-                        </div>
-                    </div>
-                </form>
-                @if (ViewBag.Message != null)
-                {
-                    <div class="alert alert-warning mt-3">
-                        @ViewBag.Message
-                    </div>
-                }
+        <div class="col-md-4 mb-4">
+            <div class="card sky-card h-100 text-center p-4 border-top border-info border-4">
+                <div class="card-body d-flex flex-column">
+                    <i class="fa-solid fa-hotel fa-4x text-info mb-4 mt-2"></i>
+                    <h3 class="fw-bold text-dark">Manage Hotels</h3>
+                    <p class="text-muted mb-4">Update accommodation directories, room availability, and locations.</p>
+                    <a asp-controller="Hotel" asp-action="Search" class="btn btn-info text-white btn-lg mt-auto w-100">Go to Hotels</a>
+                </div>
             </div>
         </div>
-    }
 
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h3>All Services</h3>
-        <a asp-action="Create" class="btn btn-primary">Create New Service</a>
+        <div class="col-md-4 mb-4">
+            <div class="card sky-card h-100 text-center p-4 border-top border-success border-4">
+                <div class="card-body d-flex flex-column">
+                    <i class="fa-solid fa-address-book fa-4x text-success mb-4 mt-2"></i>
+                    <h3 class="fw-bold text-dark">System Bookings</h3>
+                    <p class="text-muted mb-4">View all customer reservations, verify payments, and manage cancellations.</p>
+                    <a asp-controller="Booking" asp-action="Index" class="btn btn-success btn-lg mt-auto w-100">Go to Bookings</a>
+                </div>
+            </div>
+        </div>
     </div>
-    <table class="table table-hover table-bordered">
-        <thead class="thead-light">
-            <tr>
-                <th>@Html.DisplayNameFor(model => model.BasePrice)</th>
-                <th>@Html.DisplayNameFor(model => model.ServiceType)</th>
-                <th>City</th>
-                <th>Address</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
+}
+
+else if (ViewBag.ActiveService == "Portal" || string.IsNullOrEmpty(ViewBag.ActiveService))
+{
+    <div class="row justify-content-center mt-5">
+        <div class="col-12 text-center mb-5">
+            <h1 class="display-5 fw-bold" style="color: var(--dark-blue);">Where will you go next?</h1>
+            <p class="lead text-muted">Book flights, find hotels, and manage your trips in one place.</p>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card sky-card h-100 text-center p-4 border-top border-primary border-4">
+                <div class="card-body d-flex flex-column">
+                    <i class="fa-solid fa-plane fa-4x text-primary mb-4 mt-2"></i>
+                    <h3 class="fw-bold text-dark">Book Flights</h3>
+                    <p class="text-muted mb-4">Search hundreds of routes and find the perfect flight for your journey.</p>
+                    <a asp-controller="Service" asp-action="Index" asp-route-type="Flight" class="btn btn-sky btn-lg mt-auto w-100">Search Flights</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card sky-card h-100 text-center p-4 border-top border-info border-4">
+                <div class="card-body d-flex flex-column">
+                    <i class="fa-solid fa-bed fa-4x text-info mb-4 mt-2"></i>
+                    <h3 class="fw-bold text-dark">Find Hotels</h3>
+                    <p class="text-muted mb-4">Discover comfortable accommodations and premium hotels worldwide.</p>
+                    <a asp-controller="Service" asp-action="Index" asp-route-type="Hotel" class="btn btn-info text-white btn-lg mt-auto w-100">Search Hotels</a>
+                </div>
+            </div>
+        </div>
+
+        @if (User.Identity.IsAuthenticated && User.IsInRole("User"))
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card sky-card h-100 text-center p-4 border-top border-success border-4">
+                    <div class="card-body d-flex flex-column">
+                        <i class="fa-solid fa-suitcase-rolling fa-4x text-success mb-4 mt-2"></i>
+                        <h3 class="fw-bold text-dark">My Trips</h3>
+                        <p class="text-muted mb-4">View your upcoming reservations, print tickets, and manage bookings.</p>
+                        <a asp-controller="Booking" asp-action="UserBookings" asp-route-userId="@User.FindFirstValue(ClaimTypes.NameIdentifier)" class="btn btn-success btn-lg mt-auto w-100">View My Trips</a>
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card sky-card h-100 text-center p-4 border-top border-warning border-4">
+                    <div class="card-body d-flex flex-column">
+                        <i class="fa-solid fa-user-plus fa-4x text-warning mb-4 mt-2"></i>
+                        <h3 class="fw-bold text-dark">Join SkyWings</h3>
+                        <p class="text-muted mb-4">Create a free account to book tickets, manage your trips, and leave reviews.</p>
+                        <a asp-area="Identity" asp-page="/Account/Register" class="btn btn-warning text-dark fw-bold btn-lg mt-auto w-100">Create Account</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+else
+{
+    <div class="row justify-content-center mt-3">
+        <div class="col-lg-10">
+            @if (ViewBag.ActiveService == "Hotel")
             {
-                <tr>
-                    <td>@Html.DisplayFor(modelItem => item.BasePrice)</td>
-                    <td>@Html.DisplayFor(modelItem => item.ServiceType)</td>
-                    <td>@Html.DisplayFor(modelItem => item.Location.City)</td>
-                    <td>@Html.DisplayFor(modelItem => item.Location.Address)</td>
-                    <td>
-                        <a asp-action="Edit" asp-route-id="@item.ServiceID" class="btn btn-sm btn-outline-secondary">Edit</a>
-                        <a asp-action="Details" asp-route-id="@item.ServiceID" class="btn btn-sm btn-outline-info">Details</a>
-                        <a asp-action="Delete" asp-route-id="@item.ServiceID" class="btn btn-sm btn-outline-danger">Delete</a>
-                    </td>
-                </tr>
+                <div class="card sky-card">
+                    <div class="card-header sky-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="fa-solid fa-bed me-2"></i> Find a Place to Stay</h5>
+                        <a asp-action="Index" asp-route-type="Portal" class="btn btn-sm btn-outline-light"><i class="fa-solid fa-arrow-left me-1"></i> Dashboard</a>
+                    </div>
+                    <div class="card-body p-4">
+                        <form asp-controller="Service" asp-action="SearchHotels" method="post">
+                            <div class="row align-items-end g-3">
+                                <div class="col-md-9">
+                                    <label class="form-label text-muted fw-bold">Destination City:</label>
+                                    <input type="text" name="city" class="form-control form-control-lg bg-light" placeholder="e.g. Paris, Tokyo, New York" required />
+                                </div>
+                                <div class="col-md-3">
+                                    <button type="submit" class="btn btn-sky btn-lg w-100">Search Hotels</button>
+                                </div>
+                            </div>
+                        </form>
+                        
+                        @if (ViewBag.Message != null)
+                        {
+                            <div class="alert alert-warning mt-4 mb-0"><i class="fa-solid fa-triangle-exclamation me-2"></i> @ViewBag.Message</div>
+                        }
+                    </div>
+                </div>
             }
-        </tbody>
-    </table>
-</div>
+            else
+            {
+                <div class="card sky-card">
+                    <div class="card-header sky-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="fa-solid fa-plane me-2"></i> Find a Flight</h5>
+                        <a asp-action="Index" asp-route-type="Portal" class="btn btn-sm btn-outline-light"><i class="fa-solid fa-arrow-left me-1"></i> Dashboard</a>
+                    </div>
+                    <div class="card-body p-4">
+                        <form asp-controller="Service" asp-action="SearchFlights" method="post">
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label class="form-label text-muted fw-bold">From (Origin):</label>
+                                    <select name="from" class="form-select form-select-lg bg-light" required asp-items="@ViewBag.availableCities">
+                                        <option value="">-- Select Origin --</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label text-muted fw-bold">To (Destination):</label>
+                                    <select name="to" class="form-select form-select-lg bg-light" required asp-items="@ViewBag.availableCities">
+                                        <option value="">-- Select Destination --</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label text-muted fw-bold">Departure Date:</label>
+                                    <input type="date" name="date" class="form-control form-control-lg bg-light" required />
+                                </div>
+                            </div>
+                            <div class="row mt-4">
+                                <div class="col-12 text-end">
+                                    <button type="submit" class="btn btn-sky btn-lg px-5">Search Flights <i class="fa-solid fa-arrow-right ms-2"></i></button>
+                                </div>
+                            </div>
+                        </form>
+
+                        @if (ViewBag.Message != null)
+                        {
+                            <div class="alert alert-warning mt-4 mb-0"><i class="fa-solid fa-triangle-exclamation me-2"></i> @ViewBag.Message</div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}

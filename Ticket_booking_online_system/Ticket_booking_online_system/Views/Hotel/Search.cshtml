@@ -1,45 +1,61 @@
 ﻿@model IEnumerable<DAL.Models.HotelService>
+
 @{
-    ViewData["Title"] = "Hotels";
+    ViewData["Title"] = "Manage Hotels";
 }
 
-<h1>Available Hotels</h1>
-
-<form asp-action="Results" method="get" class="mb-3">
-    <div class="input-group">
-        <input type="text" name="city" class="form-control" placeholder="Search by city..." />
-        <button type="submit" class="btn btn-primary">Search</button>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 style="color: var(--dark-blue);"><i class="fa-solid fa-hotel me-2"></i>Hotel Management</h2>
+        <a asp-controller="Hotel" asp-action="Create" class="btn btn-sky"><i class="fa-solid fa-plus me-1"></i> Add New Hotel</a>
     </div>
-</form>
 
-<p>
-    <a asp-controller="Hotel" asp-action="Create" class="btn btn-success">Add New Hotel</a>
-</p>
+    <form asp-action="Results" method="get" class="mb-4">
+        <div class="input-group input-group-lg shadow-sm">
+            <span class="input-group-text bg-white border-end-0"><i class="fa-solid fa-magnifying-glass text-muted"></i></span>
+            <input type="text" name="city" class="form-control border-start-0" placeholder="Filter hotels by city..." />
+            <button type="submit" class="btn btn-dark px-4">Search</button>
+        </div>
+    </form>
 
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Hotel Name</th>
-            <th>Room Type</th>
-            <th>Check In</th>
-            <th>Check Out</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.Hotel_Name</td>
-                <td>@item.Room_Type</td>
-                <td>@item.Check_In?.ToShortDateString()</td>
-                <td>@item.Check_Out?.ToShortDateString()</td>
-                <td>
-                    <a asp-action="Details" asp-route-serviceId="@item.ServiceId" class="btn btn-sm btn-info">Details</a>
-                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Edit</a>
-                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+    <div class="card sky-card">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light text-muted">
+                        <tr>
+                            <th class="ps-4">Hotel Name</th>
+                            <th>Room Type</th>
+                            <th>City</th>
+                            <th>Dates Available</th>
+                            <th>Price / Night</th>
+                            <th class="text-end pe-4">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="ps-4 fw-bold text-dark">@item.Hotel_Name</td>
+                                <td>@item.Room_Type</td>
+                                <td><span class="badge bg-info text-dark">@(item.Service?.Location?.City ?? "N/A")</span></td>
+                                <td>
+                                    <small class="text-muted d-block">In: @(item.Check_In?.ToString("MMM dd, yyyy") ?? "N/A")</small>
+                                    <small class="text-muted d-block">Out: @(item.Check_Out?.ToString("MMM dd, yyyy") ?? "N/A")</small>
+                                </td>
+                                <td class="text-success fw-bold">@(item.Service?.BasePrice.ToString("C") ?? "$0.00")</td>
+                                <td class="text-end pe-4">
+                                    <div class="btn-group shadow-sm">
+                                        <a asp-action="Details" asp-route-serviceId="@item.ServiceId" class="btn btn-sm btn-outline-info"><i class="fa-solid fa-eye"></i></a>
+                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-warning"><i class="fa-solid fa-pen"></i></a>
+                                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger"><i class="fa-solid fa-trash"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
