@@ -15,7 +15,7 @@ namespace DAL.Models
         [Required]
         [StringLength(50)]
         public string Passport_num { get; set; }
-
+        //add comment
         public DateTime Created_at { get; set; }
 
         public ICollection<Booking> Bookings { get; set; }

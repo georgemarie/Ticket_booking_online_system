@@ -1,4 +1,6 @@
-﻿@model IEnumerable<DAL.Models.Service>
+﻿@using DAL.Models
+@model IEnumerable<DAL.Models.Service>
+
 @{
     ViewData["Title"] = "Services - Index";
 }
@@ -43,13 +45,20 @@
             <div class="card-body">
                 <form asp-controller="Service" asp-action="SearchFlights" method="post">
                     <div class="row">
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">From (Origin City):</label>
-                            <input type="text" name="from" class="form-control" placeholder="e.g., Cairo" required />
+                        <div class="form-group mb-3">
+                            <label class="control-label">From (Origin)</label>
+                            <select name="from" class="form-control" required
+                                    asp-items="@Html.GetEnumSelectList<DAL.Models.Country>()">
+                                <option value="">-- Select Origin --</option>
+                            </select>
                         </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">To (Destination City):</label>
-                            <input type="text" name="to" class="form-control" placeholder="e.g., Madrid" required />
+
+                        <div class="form-group mb-3">
+                            <label class="control-label">To (Destination)</label>
+                            <select name="to" class="form-control" required
+                                    asp-items="@Html.GetEnumSelectList<DAL.Models.Country>()">
+                                <option value="">-- Select Destination --</option>
+                            </select>
                         </div>
                         <div class="col-md-3 mb-3">
                             <label class="form-label">Departure Date:</label>
