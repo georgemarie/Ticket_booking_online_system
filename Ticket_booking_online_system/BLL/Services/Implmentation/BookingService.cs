@@ -41,6 +41,21 @@ namespace BLL.Services.Implmentation
             return true;
         }
 
+        public int CreateBookingwithPayement (int serviceId, string userId)
+        {
+            Booking booking = new Booking()
+            {
+                ServiceID = serviceId,
+                UserID = userId,
+                Date = DateTime.Now,
+                Status = BookingStatus.Pending,
+            };
+
+            _bookingRepo.Add(booking);
+            _bookingRepo.Save();
+
+            return booking.BookingID;
+        }
         public IEnumerable<Booking> GetUserBookings(string userId)
         {
             return _bookingRepo.GetUserBookings(userId);

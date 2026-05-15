@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -24,9 +25,10 @@ namespace DAL.Models
 
         
         [ForeignKey("User")]
-        public string UserID { get; set; }
+     
+        public string? UserID { get; set; }
 
-        public ApplicationUser User { get; set; }
+        public ApplicationUser? User { get; set; }
 
         [ForeignKey("Service")]
         public int ServiceID { get; set; }

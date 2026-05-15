@@ -10,6 +10,7 @@ namespace BLL.Services.interfaces
         // bool CreateBooking(string flightNumber, int userId);
       bool  CreateBooking(int serviceId, string userId);
         IEnumerable<Booking> GetUserBookings(string userId);
+        int CreateBookingwithPayement(int serviceId, string userId);
 
         bool CancelBooking(int bookingId);
     }

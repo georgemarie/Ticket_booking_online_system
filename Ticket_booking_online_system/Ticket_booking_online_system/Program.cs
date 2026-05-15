@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Ticket_booking_online_system.Data;
 using Ticket_booking_online_system.Seed;
-
 namespace Ticket_booking_online_system
 {
     public class Program
@@ -50,6 +49,9 @@ namespace Ticket_booking_online_system
                 options.LoginPath = "/Identity/Account/Login";
                 options.AccessDeniedPath = "/Identity/Account/AccessDenied";
             });
+
+            Stripe.StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
+
             var app = builder.Build();
             using (var scope = app.Services.CreateScope())
             {
