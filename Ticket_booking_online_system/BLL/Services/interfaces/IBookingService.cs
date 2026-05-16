@@ -12,5 +12,6 @@ namespace BLL.Services.interfaces
         IEnumerable<Booking> GetUserBookings(string userId);
 
         bool CancelBooking(int bookingId);
+        public int CreateBookingwithPayement(int serviceId, string userId);
     }
 }
