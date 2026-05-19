@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Stripe.Checkout;
 using System;
 using System.Linq;
 using System.Security.Claims;
@@ -131,11 +132,108 @@ namespace Ticket_booking_online_system.Controllers
             if (!ModelState.IsValid) return RedirectToAction("Index", "Service");
 
             string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            _bookingService.CreateBooking(model.ServiceID, userId);
 
-            return RedirectToAction(nameof(UserBookings), new { userId = userId });
+
+            var bookingId = _bookingService.CreateBookingwithPayement(model.ServiceID, userId);
+
+            var serviceEntity = _serviceRepository.GetById(model.ServiceID);
+
+            var options = new SessionCreateOptions
+            {
+                Mode = "payment",
+
+                SuccessUrl = $"http://localhost:5237/Payment/Success?bookingId={bookingId}",
+                CancelUrl = $"http://localhost:5237/Payment/Cancel?bookingId={bookingId}",
+
+                LineItems = new List<SessionLineItemOptions>
+{
+    new SessionLineItemOptions
+    {
+        PriceData = new SessionLineItemPriceDataOptions
+        {
+            Currency = "usd",
+            UnitAmount = (long)(serviceEntity.BasePrice * 100),
+            ProductData = new SessionLineItemPriceDataProductDataOptions
+            {
+                Name = serviceEntity.ServiceType
+            }
+        },
+        Quantity = 1
+    }
+}
+            };
+
+            var session = new SessionService().Create(options);
+
+            return Redirect(session.Url);
+
         }
 
+
+        //[Authorize(Roles = "User")]
+        //// GET: /Booking/Create
+        //[HttpGet("Create")]
+        //public IActionResult Create()
+        //{
+        //    ViewBag.ServiceID =
+        //        new SelectList(_serviceRepository.GetAll(), "ServiceID", "ServiceType");
+
+        //    return View();
+        //}
+        //public IActionResult Create()
+        //{
+        //    ViewBag.UserID = new SelectList(_userRepository.GetAll(), "UserID", "Name");
+        //    ViewBag.ServiceID = new SelectList(_serviceRepository.GetAll(), "ServiceID", "ServiceType");
+        //    return View();
+        //}
+        //        [HttpPost("Create")]
+        //        [ValidateAntiForgeryToken]
+        //        public IActionResult Create(Booking model)
+        //        {
+        //            if (!ModelState.IsValid)
+        //            {
+        //                ViewBag.ServiceID =
+        //                    new SelectList(_serviceRepository.GetAll(), "ServiceID", "ServiceType");
+
+        //                return View(model);
+        //            }
+
+        //            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        //            var bookingId = _bookingService.CreateBookingwithPayement(model.ServiceID, userId);
+
+        //            var serviceEntity = _serviceRepository.GetById(model.ServiceID);
+
+        //            var options = new SessionCreateOptions
+        //            {
+        //                Mode = "payment",
+
+        //                SuccessUrl = $"http://localhost:5237/Payment/Success?bookingId={bookingId}",
+        //                CancelUrl = $"http://localhost:5237/Payment/Cancel?bookingId={bookingId}",
+
+        //                LineItems = new List<SessionLineItemOptions>
+        //{
+        //    new SessionLineItemOptions
+        //    {
+        //        PriceData = new SessionLineItemPriceDataOptions
+        //        {
+        //            Currency = "usd",
+        //            UnitAmount = (long)(serviceEntity.BasePrice * 100),
+        //            ProductData = new SessionLineItemPriceDataProductDataOptions
+        //            {
+        //                Name = serviceEntity.ServiceType
+        //            }
+        //        },
+        //        Quantity = 1
+        //    }
+        //}
+        //            };
+
+        //            var session = new SessionService().Create(options);
+
+        //            return Redirect(session.Url);
+
+        //        }
         // --- SHARED CAPABILITIES ---
         [Authorize(Roles = "User,Admin")]
         [HttpGet("Details/{id:int}")]

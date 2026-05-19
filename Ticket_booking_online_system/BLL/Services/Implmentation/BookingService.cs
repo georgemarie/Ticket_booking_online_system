@@ -22,13 +22,13 @@ namespace BLL.Services.Implmentation
         }
 
 
-        public bool CreateBooking(int serviceId,string userId)
+        public bool CreateBooking(int serviceId, string userId)
         {
             Booking booking = new Booking()
             {
                 ServiceID = serviceId,
-                UserID = userId,    
-          
+                UserID = userId,
+
                 Date = DateTime.Now,
 
                 Status = BookingStatus.Pending,
@@ -46,7 +46,7 @@ namespace BLL.Services.Implmentation
             return _bookingRepo.GetUserBookings(userId);
         }
 
-       
+
         public bool CancelBooking(int bookingId)
         {
             var booking = _bookingRepo.GetById(bookingId);
@@ -54,7 +54,7 @@ namespace BLL.Services.Implmentation
             if (booking == null)
                 return false;
 
-            if (booking.Status == BookingStatus.Confirmed)
+            if (booking.Status == BookingStatus.Cancelled)
                 return false;
 
             booking.Status = BookingStatus.Cancelled;
@@ -64,6 +64,21 @@ namespace BLL.Services.Implmentation
 
             return true;
         }
+        public int CreateBookingwithPayement(int serviceId, string userId)
+        {
+            Booking booking = new Booking()
+            {
+                ServiceID = serviceId,
+                UserID = userId,
+                Date = DateTime.Now,
+                Status = BookingStatus.Pending,
+            };
+
+            _bookingRepo.Add(booking);
+            _bookingRepo.Save();
+
+            return booking.BookingID;
+        }
     }
-    }
-    
+}
+
